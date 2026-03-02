@@ -1,0 +1,190 @@
+# ═══════════════════════════════════════════════════════════════
+#  EcoVerse — .gitignore
+#  Protects secrets, build artifacts, IDE files, OS junk
+# ═══════════════════════════════════════════════════════════════
+
+
+# ───────────────────────────────────────────────────────────────
+#  🔒 SECRETS — Never commit these
+# ───────────────────────────────────────────────────────────────
+
+# Environment variable files
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# Spring Boot secret configs (create these locally, never push)
+backend/src/main/resources/application-secrets.properties
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application-prod.properties
+backend/src/main/resources/application.properties
+
+# Any file that might contain passwords or API keys
+*.secret
+*.key
+*credentials*
+*secrets*
+
+
+# ───────────────────────────────────────────────────────────────
+#  ☕ BACKEND — Spring Boot / Maven
+# ───────────────────────────────────────────────────────────────
+
+# Maven build output
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Compiled class files
+*.class
+
+# JAR / WAR build artifacts
+*.jar
+*.war
+*.ear
+*.nar
+
+# Maven wrapper (optional — remove this line if you want to commit it)
+# backend/mvnw
+# backend/mvnw.cmd
+
+# Spring Boot logs
+*.log
+logs/
+backend/logs/
+
+
+# ───────────────────────────────────────────────────────────────
+#  ⚛️  FRONTEND — React / Vite / Node
+# ───────────────────────────────────────────────────────────────
+
+# Node modules — NEVER commit this (huge folder)
+frontend/node_modules/
+node_modules/
+
+# Vite build output
+frontend/dist/
+frontend/dist-ssr/
+
+# Vite cache
+frontend/.vite/
+
+# npm / yarn / pnpm lock files (keep package-lock.json, ignore others)
+frontend/yarn.lock
+frontend/.pnp
+frontend/.pnp.js
+
+# Local environment overrides
+frontend/.env
+frontend/.env.*
+
+
+# ───────────────────────────────────────────────────────────────
+#  🛠️  IDE — IntelliJ IDEA
+# ───────────────────────────────────────────────────────────────
+
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# IntelliJ workspace (personal settings, not project settings)
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.statistics.xml
+.idea/dictionaries/
+.idea/shelf/
+
+
+# ───────────────────────────────────────────────────────────────
+#  🛠️  IDE — VS Code
+# ───────────────────────────────────────────────────────────────
+
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+
+# ───────────────────────────────────────────────────────────────
+#  🛠️  IDE — Eclipse / STS
+# ───────────────────────────────────────────────────────────────
+
+.classpath
+.project
+.settings/
+bin/
+.sts4-cache/
+
+
+# ───────────────────────────────────────────────────────────────
+#  💻 OS — Windows
+# ───────────────────────────────────────────────────────────────
+
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+
+# ───────────────────────────────────────────────────────────────
+#  🍎 OS — macOS
+# ───────────────────────────────────────────────────────────────
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+
+# ───────────────────────────────────────────────────────────────
+#  🐧 OS — Linux
+# ───────────────────────────────────────────────────────────────
+
+*~
+.nfs*
+
+
+# ───────────────────────────────────────────────────────────────
+#  🗄️  DATABASE — never commit local DB files
+# ───────────────────────────────────────────────────────────────
+
+*.sql.bak
+*.db
+*.sqlite
+*.sqlite3
+dump.sql
+backup.sql
+
+
+# ───────────────────────────────────────────────────────────────
+#  📦 MISC
+# ───────────────────────────────────────────────────────────────
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Test coverage reports
+coverage/
+*.lcov
+.nyc_output/
+
+# Package manager debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

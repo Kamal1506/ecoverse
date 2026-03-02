@@ -1,0 +1,208 @@
+/* ── Auth Pages — EcoVerse Gaming Style ──────────────────────────────────── */
+
+.auth-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated perspective grid in background */
+.auth-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 255, 136, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 136, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+/* Card */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 44px 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Top accent line */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+}
+
+/* Corner accents */
+.auth-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 40px; height: 40px;
+  border-bottom: 2px solid var(--green);
+  border-right:  2px solid var(--green);
+  opacity: 0.4;
+}
+
+/* Logo */
+.auth-logo {
+  font-family: var(--font-hud);
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: 5px;
+  color: var(--green);
+  text-shadow: 0 0 20px var(--green), 0 0 50px rgba(0, 255, 136, 0.2);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.auth-logo span { color: var(--cyan); }
+
+/* Tagline */
+.auth-tagline {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+/* Form */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Field */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.field-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 16px;
+  outline: none;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.field-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.field-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 1px var(--green), 0 0 16px rgba(0, 255, 136, 0.1);
+  background: rgba(0, 255, 136, 0.02);
+}
+
+.field-input.field-error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px var(--red);
+}
+
+.err-msg {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--red);
+}
+
+/* API-level error bar */
+.auth-api-error {
+  background: rgba(255, 34, 68, 0.08);
+  border: 1px solid rgba(255, 34, 68, 0.3);
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  letter-spacing: 0.5px;
+}
+
+/* Submit button */
+.auth-submit {
+  font-family: var(--font-hud);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 15px;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: #00ff99;
+  box-shadow: 0 0 28px rgba(0, 255, 136, 0.5);
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.auth-spinner {
+  animation: blink 0.9s ease infinite;
+}
+
+/* Switch link */
+.auth-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.auth-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.auth-link:hover {
+  color: var(--green);
+  text-shadow: 0 0 10px var(--green);
+}

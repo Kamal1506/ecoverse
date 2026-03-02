@@ -1,0 +1,193 @@
+/* ── EcoVerse Global Theme ───────────────────────────────────────────────── */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green:      #00FF88;
+  --green-dim:  #00CC66;
+  --green-dark: #003322;
+  --cyan:       #00E5FF;
+  --yellow:     #FFD700;
+  --orange:     #FF6600;
+  --red:        #FF2244;
+  --white:      #FFFFFF;
+
+  --bg:         #020C06;
+  --bg2:        #041A0D;
+  --panel:      rgba(0, 255, 136, 0.04);
+  --border:     rgba(0, 255, 136, 0.15);
+
+  --text:       #B8FFD8;
+  --text-dim:   #4A9968;
+  --text-muted: #2D5C3E;
+
+  --font-hud:   'Orbitron', monospace;
+  --font-body:  'Rajdhani', sans-serif;
+  --font-mono:  'Share Tech Mono', monospace;
+
+  --radius:     2px;
+  --transition: all 0.2s ease;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scanline overlay — gives that retro gaming CRT feel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.04) 3px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+}
+
+/* Ambient green glow in background */
+body::after {
+  content: '';
+  position: fixed;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 400px;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 255, 136, 0.04) 0%,
+    transparent 70%
+  );
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+  border: none;
+  background: none;
+}
+
+input { font-family: var(--font-body); }
+
+a { color: inherit; text-decoration: none; }
+
+/* Page container */
+.page-container {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding-top: 64px;
+}
+
+/* Utility classes */
+.mono    { font-family: var(--font-mono); }
+.hud-font { font-family: var(--font-hud); }
+
+/* ── Shared button styles ──────────────────────────────────────────────── */
+.btn-primary {
+  font-family: var(--font-hud);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-primary:hover {
+  background: #00ff99;
+  box-shadow: 0 0 28px rgba(0, 255, 136, 0.45);
+  transform: translateY(-1px);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-ghost {
+  font-family: var(--font-hud);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 13px 26px;
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-ghost:hover {
+  color: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.1);
+}
+
+/* ── XP Popup animation ───────────────────────────────────────────────── */
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0)    scale(1); }
+  100% { opacity: 0; transform: translateY(-90px) scale(1.3); }
+}
+
+.xp-popup {
+  position: fixed;
+  font-family: var(--font-hud);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--yellow);
+  text-shadow: 0 0 14px rgba(255, 215, 0, 0.7);
+  pointer-events: none;
+  z-index: 9998;
+  animation: floatUp 1.3s ease forwards;
+}
+
+/* ── Panel / Card ─────────────────────────────────────────────────────── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  position: relative;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+}
+
+/* ── Section label ────────────────────────────────────────────────────── */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
