@@ -31,6 +31,10 @@ public class AuthDTO {
         @NotBlank(message = "Password is required")
         @Size(min = 6, message = "Password must be at least 6 characters")
         private String password;
+
+        // Optional. Accepts ADMIN/USER or ROLE_ADMIN/ROLE_USER.
+        // If omitted, backend defaults to ROLE_USER.
+        private String role;
     }
 
     // ── POST /api/auth/login ─────────────────────────────────────────────────

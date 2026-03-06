@@ -2,6 +2,7 @@ package com.ecoverse.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -24,21 +25,27 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String password;  // BCrypt hashed
 
+    // ✅ Store as plain ADMIN / USER in DB
+    // Spring Security's UserDetailsServiceImpl adds "ROLE_" prefix automatically
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private Role role;
 
     @Column(name = "total_xp", nullable = false)
     @Builder.Default
     private Integer totalXp = 0;
 
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     public enum Role {
-        ROLE_ADMIN, ROLE_USER
+        ADMIN, USER, ROLE_ADMIN, ROLE_USER;
+
+        public String normalized() {
+            return name().startsWith("ROLE_") ? name().substring(5) : name();
+        }
     }
 }

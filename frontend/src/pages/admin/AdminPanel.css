@@ -1,0 +1,241 @@
+/* ── Admin Panel ─────────────────────────────────────────────────────────── */
+
+.admin-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 28px 60px;
+}
+
+/* Header */
+.admin-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 36px 0 24px;
+  gap: 20px;
+}
+
+.admin-title {
+  font-family: var(--font-hud);
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+/* Stats */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.admin-stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.admin-stat::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--green);
+}
+.admin-stat-n {
+  font-family: var(--font-hud);
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--green);
+  line-height: 1;
+}
+.admin-stat-l {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* Form wrapper */
+.admin-form-wrap {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 28px;
+  margin-bottom: 32px;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Form layouts */
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 14px;
+}
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Form group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.form-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 14px;
+  outline: none;
+  transition: all 0.2s;
+  width: 100%;
+}
+.form-input::placeholder { color: var(--text-muted); font-weight: 400; }
+.form-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 1px var(--green), 0 0 12px rgba(0, 255, 136, 0.08);
+}
+.form-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+/* Question block */
+.question-block {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.question-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.q-remove-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--red);
+  background: transparent;
+  border: 1px solid rgba(255, 34, 68, 0.2);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.q-remove-btn:hover {
+  background: rgba(255, 34, 68, 0.08);
+  border-color: var(--red);
+}
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+/* Table */
+.admin-table {
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.admin-table-head {
+  display: grid;
+  grid-template-columns: 1fr 110px 90px 100px 110px 100px;
+  background: rgba(0, 255, 136, 0.05);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 18px;
+  gap: 8px;
+}
+
+.admin-table-row {
+  display: grid;
+  grid-template-columns: 1fr 110px 90px 100px 110px 100px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.05);
+  gap: 8px;
+  transition: background 0.2s;
+  align-items: center;
+}
+.admin-table-row:hover { background: var(--panel); }
+.admin-table-row:last-child { border-bottom: none; }
+
+.atc {
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+}
+.atc.mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+}
+.atc.center { justify-content: center; }
+
+.quiz-title-text {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+/* Delete button */
+.delete-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--red);
+  background: transparent;
+  border: 1px solid rgba(255, 34, 68, 0.2);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.delete-btn:hover:not(:disabled) {
+  background: rgba(255, 34, 68, 0.08);
+  border-color: var(--red);
+}
+.delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Empty state */
+.admin-empty {
+  padding: 48px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
