@@ -1,0 +1,240 @@
+/* ── Result Page ─────────────────────────────────────────────────────────── */
+
+@keyframes rankReveal {
+  0%   { transform: scale(0.4) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.1) rotate(2deg);  opacity: 1; }
+  100% { transform: scale(1)   rotate(0deg);  opacity: 1; }
+}
+
+@keyframes statsSlide {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 20px var(--rank-glow, rgba(0,255,136,0.3)); }
+  50%     { box-shadow: 0 0 50px var(--rank-glow, rgba(0,255,136,0.5)); }
+}
+
+.result-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 88px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── Rank section ── */
+.result-rank-section {
+  text-align: center;
+}
+
+.result-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.result-quiz-name {
+  font-family: var(--font-hud);
+  font-size: clamp(14px, 2.5vw, 20px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 3px;
+  margin-bottom: 36px;
+}
+
+/* The big rank ring */
+.result-rank-ring {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 3px solid var(--rank-color, var(--green));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  animation: rankReveal 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards,
+             glowPulse 2.5s ease 0.7s infinite;
+  background: radial-gradient(circle, rgba(0,0,0,0.6), rgba(0,0,0,0.9));
+}
+
+.result-rank-letter {
+  font-family: var(--font-hud);
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--rank-color, var(--green));
+  line-height: 1;
+  text-shadow: 0 0 30px var(--rank-glow, rgba(0,255,136,0.5));
+}
+
+.result-rank-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--rank-color, var(--green));
+  margin-top: 4px;
+  opacity: 0.85;
+}
+
+.result-message {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 auto;
+  animation: statsSlide 0.5s ease 0.6s both;
+}
+
+/* ── Stats grid ── */
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  animation: statsSlide 0.5s ease 0.7s both;
+}
+
+.result-stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 18px 12px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-stat::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--green);
+  opacity: 0.25;
+}
+
+.result-stat-n {
+  font-family: var(--font-hud);
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--green);
+  line-height: 1;
+}
+
+.result-stat-l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+/* ── Performance bar ── */
+.result-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: statsSlide 0.5s ease 0.85s both;
+}
+
+.result-bar-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.result-bar-track {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+}
+
+.result-bar-seg {
+  flex: 1;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.result-bar-seg.filled {
+  border-color: transparent;
+}
+
+.result-bar-pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ── Actions ── */
+.result-actions {
+  display: flex;
+  gap: 12px;
+  animation: statsSlide 0.5s ease 1s both;
+}
+
+.result-actions button {
+  flex: 1;
+  padding: 16px;
+  font-size: 13px;
+}
+
+/* ── Level note ── */
+.result-level-note {
+  text-align: center;
+  animation: statsSlide 0.5s ease 1.1s both;
+}
+
+.result-review {
+  display: grid;
+  gap: 10px;
+  animation: statsSlide 0.5s ease 1s both;
+}
+
+.result-review-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.result-review-item {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.result-review-item.ok {
+  border-color: rgba(0, 255, 136, 0.35);
+}
+
+.result-review-item.bad {
+  border-color: rgba(255, 107, 53, 0.4);
+}
+
+.result-review-q {
+  font-family: var(--font-hud);
+  font-size: 15px;
+}
+
+.result-review-row {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.result-review-label {
+  display: inline-block;
+  min-width: 130px;
+  color: var(--text);
+}

@@ -11,6 +11,8 @@ export default function Register() {
   const [form, setForm]       = useState({ name: '', email: '', password: '', confirm: '' });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors]   = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const change = (e) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -87,29 +89,97 @@ export default function Register() {
 
           <div className="field-group">
             <label className="field-label">PASSWORD</label>
-            <input
-              className={`field-input${errors.password ? ' field-error' : ''}`}
-              type="password"
-              name="password"
-              placeholder="Min 6 characters"
-              value={form.password}
-              onChange={change}
-              autoComplete="new-password"
-            />
+            <div className="password-wrap password-wrap-icon">
+              <input
+                className={`field-input${errors.password ? ' field-error' : ''}`}
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Min 6 characters"
+                value={form.password}
+                onChange={change}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="password-toggle-inline"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M3 3l18 18m-3.2-3.2A9.5 9.5 0 0 1 12 20C7 20 3.2 16.7 1.5 12c.8-2.1 2.1-3.9 3.9-5.2m3-1.7A9.8 9.8 0 0 1 12 4c5 0 8.8 3.3 10.5 8a15.2 15.2 0 0 1-2.6 4.2M14.1 14.1A3 3 0 0 1 9.9 9.9"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M1.5 12C3.2 7.3 7 4 12 4s8.8 3.3 10.5 8c-1.7 4.7-5.5 8-10.5 8S3.2 16.7 1.5 12Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                  </svg>
+                )}
+              </button>
+            </div>
             {errors.password && <span className="err-msg">{errors.password}</span>}
           </div>
 
           <div className="field-group">
             <label className="field-label">CONFIRM PASSWORD</label>
-            <input
-              className={`field-input${errors.confirm ? ' field-error' : ''}`}
-              type="password"
-              name="confirm"
-              placeholder="Repeat your password"
-              value={form.confirm}
-              onChange={change}
-              autoComplete="new-password"
-            />
+            <div className="password-wrap password-wrap-icon">
+              <input
+                className={`field-input${errors.confirm ? ' field-error' : ''}`}
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirm"
+                placeholder="Repeat your password"
+                value={form.confirm}
+                onChange={change}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="password-toggle-inline"
+                onClick={() => setShowConfirmPassword((s) => !s)}
+                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                title={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+              >
+                {showConfirmPassword ? (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M3 3l18 18m-3.2-3.2A9.5 9.5 0 0 1 12 20C7 20 3.2 16.7 1.5 12c.8-2.1 2.1-3.9 3.9-5.2m3-1.7A9.8 9.8 0 0 1 12 4c5 0 8.8 3.3 10.5 8a15.2 15.2 0 0 1-2.6 4.2M14.1 14.1A3 3 0 0 1 9.9 9.9"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M1.5 12C3.2 7.3 7 4 12 4s8.8 3.3 10.5 8c-1.7 4.7-5.5 8-10.5 8S3.2 16.7 1.5 12Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                  </svg>
+                )}
+              </button>
+            </div>
             {errors.confirm && <span className="err-msg">{errors.confirm}</span>}
           </div>
 

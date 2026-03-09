@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,   "/api/quizzes").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,   "/api/quizzes/upload").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/quizzes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,   "/api/quizzes/*/attempt").authenticated()
 
                         // Everything else needs a valid JWT (any role)
                         .anyRequest().authenticated()

@@ -1,0 +1,345 @@
+/* ── CSV Upload Component ────────────────────────────────────────────────── */
+
+.csv-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Drop Zone ── */
+.drop-zone {
+  border: 2px dashed var(--border);
+  padding: 52px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.drop-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+    rgba(0, 255, 136, 0.03) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--green);
+  background: rgba(0, 255, 136, 0.03);
+}
+
+.drop-zone:hover::before,
+.drop-zone.drag-over::before {
+  opacity: 1;
+}
+
+.drop-zone.drag-over {
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
+  transform: scale(1.005);
+}
+
+.drop-icon {
+  font-size: 44px;
+  margin-bottom: 14px;
+  filter: grayscale(0.3);
+}
+
+.drop-title {
+  font-family: var(--font-hud);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.drop-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.drop-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── File preview card ── */
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(0, 255, 136, 0.04);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  padding: 18px 20px;
+}
+
+.file-preview-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.file-preview-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-family: var(--font-hud);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.file-preview-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Upload progress ── */
+.upload-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@keyframes progressScan {
+  0%   { left: -40%; }
+  100% { left: 140%; }
+}
+
+.upload-progress-bar {
+  height: 3px;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  animation: progressScan 1.2s ease infinite;
+}
+
+.upload-progress-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.uploading-text {
+  animation: blink 0.9s ease infinite;
+}
+
+/* ── Error state ── */
+.csv-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255, 34, 68, 0.06);
+  border: 1px solid rgba(255, 34, 68, 0.25);
+  padding: 18px 20px;
+}
+
+.csv-error-icon {
+  font-size: 20px;
+  color: var(--red);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.csv-error-title {
+  font-family: var(--font-hud);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--red);
+  margin-bottom: 4px;
+}
+
+.csv-error-msg {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ── Success result ── */
+.csv-result {
+  background: rgba(0, 255, 136, 0.04);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  padding: 24px;
+  position: relative;
+}
+
+.csv-result::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+}
+
+.csv-result-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.csv-result-icon {
+  font-size: 18px;
+  color: var(--green);
+  text-shadow: 0 0 10px var(--green);
+}
+
+.csv-result-title {
+  font-family: var(--font-hud);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--green);
+}
+
+.csv-result-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.csv-stat {
+  text-align: center;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+}
+
+.csv-stat-n {
+  font-family: var(--font-hud);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--green);
+  text-shadow: 0 0 12px var(--green);
+  line-height: 1;
+}
+
+.csv-stat-l {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* Warning */
+.csv-warning {
+  background: rgba(255, 102, 0, 0.07);
+  border: 1px solid rgba(255, 102, 0, 0.2);
+  color: var(--orange);
+  font-size: 13px;
+  padding: 10px 14px;
+  line-height: 1.5;
+}
+
+.csv-duplicates {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin-top: 6px;
+  color: var(--text-dim);
+}
+
+/* ── Format guide ── */
+.csv-format-guide {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-top: 4px;
+}
+
+.format-table {
+  overflow-x: auto;
+  margin-bottom: 14px;
+}
+
+.format-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+  min-width: 700px;
+}
+
+.format-cell {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 6px 8px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.format-head .format-cell {
+  background: rgba(0, 255, 136, 0.07);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  color: var(--green);
+  font-weight: 700;
+}
+
+.format-cell.ex {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.format-cell.correct {
+  color: var(--green);
+  border-color: rgba(0, 255, 136, 0.3);
+  background: rgba(0, 255, 136, 0.06);
+}
+
+.format-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}

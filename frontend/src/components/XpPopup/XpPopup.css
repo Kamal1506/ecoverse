@@ -1,0 +1,32 @@
+.xp-popup-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.xp-popup-item {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-hud);
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--green);
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.45);
+  animation: xpFloat 0.9s ease-out forwards;
+}
+
+@keyframes xpFloat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -130%);
+  }
+}

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import HUD from '../../components/HUD/HUD';
+import CsvUpload from '../../components/CsvUpload/CsvUpload';
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
+import '../../components/CsvUpload/CsvUpload.css';
 import './AdminPanel.css';
 
 const EMPTY_QUESTION = {
@@ -9,10 +11,13 @@ const EMPTY_QUESTION = {
   optionC: '', optionD: '', correctOption: 'A'
 };
 
+// Which panel is open: 'none' | 'manual' | 'csv'
+const PANEL = { NONE: 'none', MANUAL: 'manual', CSV: 'csv' };
+
 export default function AdminPanel() {
   const [quizzes, setQuizzes]       = useState([]);
   const [loading, setLoading]       = useState(true);
-  const [showForm, setShowForm]     = useState(false);
+  const [activePanel, setActivePanel] = useState(PANEL.NONE);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -35,7 +40,10 @@ export default function AdminPanel() {
     }
   };
 
-  // ── Form handlers ────────────────────────────────────────────────────────
+  const togglePanel = (panel) =>
+    setActivePanel(p => p === panel ? PANEL.NONE : panel);
+
+  // ── Manual form handlers ─────────────────────────────────────────────────
   const changeForm = (e) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -58,14 +66,12 @@ export default function AdminPanel() {
 
   const resetForm = () => {
     setForm({ title: '', description: '', xpReward: 100, questions: [{ ...EMPTY_QUESTION }] });
-    setShowForm(false);
+    setActivePanel(PANEL.NONE);
   };
 
-  // ── Submit new quiz ───────────────────────────────────────────────────────
+  // ── Submit manual quiz ────────────────────────────────────────────────────
   const submitQuiz = async (e) => {
     e.preventDefault();
-
-    // Frontend validation
     if (!form.title.trim()) { toast.error('Quiz title is required'); return; }
     if (form.questions.some(q => !q.questionText.trim())) {
       toast.error('All questions must have question text'); return;
@@ -73,7 +79,7 @@ export default function AdminPanel() {
     if (form.questions.some(q =>
       !q.optionA.trim() || !q.optionB.trim() || !q.optionC.trim() || !q.optionD.trim()
     )) {
-      toast.error('All 4 options must be filled in for every question'); return;
+      toast.error('All 4 options must be filled for every question'); return;
     }
 
     setSubmitting(true);
@@ -94,9 +100,9 @@ export default function AdminPanel() {
     }
   };
 
-  // ── Delete quiz ──────────────────────────────────────────────────────────
+  // ── Delete quiz ───────────────────────────────────────────────────────────
   const deleteQuiz = async (id, title) => {
-    if (!window.confirm(`Delete quiz "${title}"?\n\nThis will also delete all its questions. This cannot be undone.`)) return;
+    if (!window.confirm(`Delete quiz "${title}"?\n\nAll its questions will also be deleted.`)) return;
     setDeletingId(id);
     try {
       await api.delete(`/quizzes/${id}`);
@@ -121,11 +127,18 @@ export default function AdminPanel() {
               <div className="section-label">// ADMIN</div>
               <h1 className="admin-title">CONTROL PANEL</h1>
             </div>
-            <button
-              className={showForm ? 'btn-ghost' : 'btn-primary'}
-              onClick={() => setShowForm(s => !s)}>
-              {showForm ? '✕ CANCEL' : '+ NEW QUIZ'}
-            </button>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                className={activePanel === PANEL.CSV ? 'btn-primary' : 'btn-ghost'}
+                onClick={() => togglePanel(PANEL.CSV)}>
+                {activePanel === PANEL.CSV ? '✕ CLOSE' : '↑ CSV UPLOAD'}
+              </button>
+              <button
+                className={activePanel === PANEL.MANUAL ? 'btn-ghost' : 'btn-primary'}
+                onClick={() => togglePanel(PANEL.MANUAL)}>
+                {activePanel === PANEL.MANUAL ? '✕ CANCEL' : '+ NEW QUIZ'}
+              </button>
+            </div>
           </div>
 
           {/* ── Stats ── */}
@@ -136,7 +149,7 @@ export default function AdminPanel() {
             </div>
             <div className="admin-stat">
               <div className="admin-stat-n">
-                {quizzes.reduce((sum, q) => sum + (q.questionCount || 0), 0)}
+                {quizzes.reduce((s, q) => s + (q.questionCount || 0), 0)}
               </div>
               <div className="admin-stat-l">Total Questions</div>
             </div>
@@ -148,13 +161,22 @@ export default function AdminPanel() {
             </div>
           </div>
 
-          {/* ── Create Quiz Form ── */}
-          {showForm && (
-            <div className="admin-form-wrap">
-              <div className="section-label">// CREATE NEW QUIZ</div>
+          {/* ── CSV Upload Panel ── */}
+          {activePanel === PANEL.CSV && (
+            <div className="admin-panel-section">
+              <div className="section-label">// BULK UPLOAD VIA CSV</div>
+              <CsvUpload onUploadSuccess={() => {
+                fetchQuizzes();
+              }} />
+            </div>
+          )}
+
+          {/* ── Manual Create Form ── */}
+          {activePanel === PANEL.MANUAL && (
+            <div className="admin-panel-section">
+              <div className="section-label">// CREATE NEW QUIZ MANUALLY</div>
               <form className="admin-form" onSubmit={submitQuiz}>
 
-                {/* Quiz info row */}
                 <div className="form-row-3">
                   <div className="form-group">
                     <label className="form-label">QUIZ TITLE *</label>
@@ -177,7 +199,6 @@ export default function AdminPanel() {
                     value={form.description} onChange={changeForm} />
                 </div>
 
-                {/* Questions */}
                 <div className="section-label" style={{ marginTop: 24 }}>
                   // QUESTIONS ({form.questions.length})
                 </div>
@@ -190,9 +211,7 @@ export default function AdminPanel() {
                       </span>
                       {form.questions.length > 1 && (
                         <button type="button" className="q-remove-btn"
-                          onClick={() => removeQuestion(i)}>
-                          ✕ REMOVE
-                        </button>
+                          onClick={() => removeQuestion(i)}>✕ REMOVE</button>
                       )}
                     </div>
 
@@ -205,7 +224,7 @@ export default function AdminPanel() {
                     </div>
 
                     <div className="form-row-2">
-                      {['A', 'B', 'C', 'D'].map(letter => (
+                      {['A','B','C','D'].map(letter => (
                         <div key={letter} className="form-group">
                           <label className="form-label">OPTION {letter} *</label>
                           <input className="form-input"
@@ -244,21 +263,19 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* ── Quiz Roster Table ── */}
+          {/* ── Quiz Roster ── */}
           <div className="section-label" style={{ marginTop: 40 }}>
             // QUIZ ROSTER
           </div>
 
           {loading ? (
-            <div style={{
-              padding: '48px 0', color: 'var(--text-dim)',
-              fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: 3
-            }}>
+            <div style={{ padding: '48px 0', color: 'var(--text-dim)',
+              fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: 3 }}>
               LOADING...
             </div>
           ) : quizzes.length === 0 ? (
             <div className="admin-empty">
-              No quizzes yet — click <strong style={{ color: 'var(--green)' }}>+ NEW QUIZ</strong> above to create your first one.
+              No quizzes yet — use <strong style={{ color: 'var(--green)' }}>↑ CSV UPLOAD</strong> or <strong style={{ color: 'var(--green)' }}>+ NEW QUIZ</strong> above.
             </div>
           ) : (
             <div className="admin-table">
@@ -270,7 +287,6 @@ export default function AdminPanel() {
                 <div className="atc mono center">CREATED</div>
                 <div className="atc mono center">ACTION</div>
               </div>
-
               {quizzes.map(quiz => (
                 <div key={quiz.id} className="admin-table-row">
                   <div className="atc">

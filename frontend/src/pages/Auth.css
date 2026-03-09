@@ -99,6 +99,12 @@
   color: var(--text-dim);
 }
 
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .field-input {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--border);
@@ -110,6 +116,115 @@
   outline: none;
   transition: all 0.2s;
   width: 100%;
+}
+
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap .field-input {
+  padding-right: 78px;
+}
+
+.password-wrap-icon .field-input {
+  padding-right: 42px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.password-toggle-icon {
+  width: 34px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.password-toggle-label {
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  color: var(--cyan);
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.password-toggle-label:hover {
+  color: var(--green);
+  transform: scale(1.08);
+}
+
+.password-toggle-label:focus-visible {
+  outline: 1px solid var(--green);
+  outline-offset: 2px;
+}
+
+.password-toggle-label svg {
+  width: 18px;
+  height: 18px;
+}
+
+.password-toggle-inline {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--cyan);
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.password-toggle-inline:hover {
+  color: var(--green);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.password-toggle-inline:focus-visible {
+  outline: 1px solid var(--green);
+  outline-offset: 2px;
+}
+
+.password-toggle-inline svg {
+  width: 18px;
+  height: 18px;
 }
 
 .field-input::placeholder {

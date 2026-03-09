@@ -1,45 +1,49 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState } from 'react';
 import api from '../api/axios';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser]   = useState(null);   // { name, email, role, totalXp }
-  const [token, setToken] = useState(null);   // JWT string — kept in memory only
+  const [user, setUser]   = useState(null);
+  const [token, setToken] = useState(null);
 
-  // ── Sync token to the axios interceptor's window variable ────────────────
-  const storeToken = (t) => {
-    window.__ecoverse_token__ = t;
-    setToken(t);
+  // ── Register ────────────────────────────────────────────────────────────
+  const register = async (name, email, password) => {
+    const { data } = await api.post('/auth/register', { name, email, password });
+    _applyAuth(data);
+    return data;
   };
 
-  // ── Register ─────────────────────────────────────────────────────────────
-  const register = useCallback(async (name, email, password) => {
-    const { data } = await api.post('/auth/register', { name, email, password });
-    storeToken(data.token);
-    setUser({ name: data.name, email: data.email, role: data.role, totalXp: data.totalXp });
-    return data;
-  }, []);
-
-  // ── Login ─────────────────────────────────────────────────────────────────
-  const login = useCallback(async (email, password) => {
+  // ── Login ───────────────────────────────────────────────────────────────
+  const login = async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password });
-    storeToken(data.token);
-    setUser({ name: data.name, email: data.email, role: data.role, totalXp: data.totalXp });
+    _applyAuth(data);
     return data;
-  }, []);
+  };
 
-  // ── Logout ────────────────────────────────────────────────────────────────
-  const logout = useCallback(() => {
-    window.__ecoverse_token__ = null;
-    setToken(null);
+  // ── Logout ──────────────────────────────────────────────────────────────
+  const logout = () => {
     setUser(null);
-  }, []);
+    setToken(null);
+    window.__ecoverse_token__ = null;
+  };
 
-  // ── Update XP after a quiz attempt (called by QuizPlay in Sprint 4) ──────
-  const updateXp = useCallback((gained) => {
-    setUser(prev => prev ? { ...prev, totalXp: prev.totalXp + gained } : prev);
-  }, []);
+  // ── Update XP after quiz attempt — keeps HUD in sync ───────────────────
+  const updateXp = (xpEarned) => {
+    setUser(u => u ? { ...u, totalXp: (u.totalXp || 0) + xpEarned } : u);
+  };
+
+  // ── Internal: apply token + user from any auth response ─────────────────
+  const _applyAuth = (data) => {
+    window.__ecoverse_token__ = data.token;
+    setToken(data.token);
+    setUser({
+      name:     data.name,
+      email:    data.email,
+      role:     data.role,
+      totalXp:  data.totalXp ?? 0,
+    });
+  };
 
   return (
     <AuthContext.Provider value={{ user, token, register, login, logout, updateXp }}>
@@ -48,9 +52,4 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Custom hook — use this in any component instead of useContext(AuthContext)
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
-  return ctx;
-}
+export const useAuth = () => useContext(AuthContext);

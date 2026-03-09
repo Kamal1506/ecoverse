@@ -6,7 +6,6 @@
   padding: 40px 28px 60px;
 }
 
-/* Header */
 .admin-header {
   display: flex;
   align-items: flex-end;
@@ -28,7 +27,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .admin-stat {
@@ -60,21 +59,30 @@
   margin-top: 6px;
 }
 
-/* Form wrapper */
-.admin-form-wrap {
+/* Expandable panel section (CSV or Manual form) */
+.admin-panel-section {
   background: var(--panel);
   border: 1px solid var(--border);
   padding: 28px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.admin-panel-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
 }
 
+/* Form */
 .admin-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* Form layouts */
 .form-row-3 {
   display: grid;
   grid-template-columns: 1fr 180px;
@@ -86,7 +94,6 @@
   gap: 12px;
 }
 
-/* Form group */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -117,10 +124,7 @@
   border-color: var(--green);
   box-shadow: 0 0 0 1px var(--green), 0 0 12px rgba(0, 255, 136, 0.08);
 }
-.form-select {
-  appearance: none;
-  cursor: pointer;
-}
+.form-select { appearance: none; cursor: pointer; }
 
 /* Question block */
 .question-block {
@@ -131,13 +135,11 @@
   flex-direction: column;
   gap: 14px;
 }
-
 .question-block-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .q-remove-btn {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -154,7 +156,6 @@
   border-color: var(--red);
 }
 
-/* Form actions */
 .form-actions {
   display: flex;
   gap: 12px;
@@ -167,7 +168,6 @@
   border: 1px solid var(--border);
   overflow: hidden;
 }
-
 .admin-table-head {
   display: grid;
   grid-template-columns: 1fr 110px 90px 100px 110px 100px;
@@ -176,7 +176,6 @@
   padding: 10px 18px;
   gap: 8px;
 }
-
 .admin-table-row {
   display: grid;
   grid-template-columns: 1fr 110px 90px 100px 110px 100px;
@@ -209,7 +208,6 @@
   letter-spacing: 0.5px;
 }
 
-/* Delete button */
 .delete-btn {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -225,12 +223,8 @@
   background: rgba(255, 34, 68, 0.08);
   border-color: var(--red);
 }
-.delete-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+.delete-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* Empty state */
 .admin-empty {
   padding: 48px;
   text-align: center;

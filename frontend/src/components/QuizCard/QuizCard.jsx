@@ -1,50 +1,49 @@
 import { useNavigate } from 'react-router-dom';
 import './QuizCard.css';
 
-const DIFF_MAP = {
-  easy:   { label: 'EASY',   cls: 'diff-easy',   min: 0,   max: 5  },
-  medium: { label: 'MED',    cls: 'diff-med',    min: 6,   max: 10 },
-  hard:   { label: 'HARD',   cls: 'diff-hard',   min: 11,  max: 999 },
+const DIFFICULTY = (count) => {
+  if (count <= 5)  return { label: 'EASY',   color: 'var(--green)' };
+  if (count <= 10) return { label: 'MEDIUM', color: 'var(--yellow)' };
+  return               { label: 'HARD',   color: 'var(--red)' };
 };
 
-// Derive difficulty from question count
-function getDifficulty(questionCount) {
-  if (questionCount <= 5)  return DIFF_MAP.easy;
-  if (questionCount <= 10) return DIFF_MAP.medium;
-  return DIFF_MAP.hard;
-}
-
-const ICONS = ['♻️','🌍','🌿','💨','🌊','🌱','☀️','🦋','🌡️','🏔️'];
-function getIcon(id) { return ICONS[id % ICONS.length]; }
+const ICONS = ['🌍','🌿','♻️','💧','☀️','🌊','🦋','🌱','⚡','🔬'];
 
 export default function QuizCard({ quiz }) {
   const navigate   = useNavigate();
-  const difficulty = getDifficulty(quiz.questionCount);
+  const diff       = DIFFICULTY(quiz.questionCount || 0);
+  const icon       = ICONS[quiz.id % ICONS.length];
 
   return (
     <div className="quiz-card" onClick={() => navigate(`/quiz/${quiz.id}`)}>
 
-      {/* Difficulty badge */}
-      <span className={`quiz-diff ${difficulty.cls}`}>{difficulty.label}</span>
-
-      {/* Title */}
-      <div className="quiz-name">
-        {getIcon(quiz.id)} {quiz.title}
+      <div className="qc-top">
+        <div className="qc-icon">{icon}</div>
+        <div className="qc-diff" style={{ color: diff.color, borderColor: diff.color }}>
+          {diff.label}
+        </div>
       </div>
 
-      {/* Description */}
+      <div className="qc-title">{quiz.title}</div>
+
       {quiz.description && (
-        <div className="quiz-desc">{quiz.description}</div>
+        <div className="qc-desc">{quiz.description}</div>
       )}
 
-      {/* Meta row */}
-      <div className="quiz-meta">
-        <span>{quiz.questionCount} Questions</span>
-        <span className="quiz-xp">⬡ {quiz.xpReward * quiz.questionCount} MAX XP</span>
+      <div className="qc-footer">
+        <div className="qc-stat">
+          <span className="qc-stat-n">{quiz.questionCount}</span>
+          <span className="qc-stat-l">QUESTIONS</span>
+        </div>
+        <div className="qc-stat">
+          <span className="qc-stat-n" style={{ color: 'var(--yellow)' }}>
+            {(quiz.xpReward * quiz.questionCount).toLocaleString()}
+          </span>
+          <span className="qc-stat-l">MAX XP</span>
+        </div>
       </div>
 
-      {/* Hover arrow */}
-      <div className="quiz-arrow">▶</div>
+      <div className="qc-play-hint">▶ START MISSION</div>
     </div>
   );
 }
