@@ -34,6 +34,7 @@
   text-shadow: 0 0 16px var(--green), 0 0 36px rgba(0, 255, 136, 0.2);
   white-space: nowrap;
   user-select: none;
+  cursor: pointer;
 }
 .hud-logo span { color: var(--cyan); }
 
@@ -54,7 +55,7 @@
   padding: 6px 18px;
   background: transparent;
   border: 1px solid transparent;
-  color: var(--text-dim);
+  color: rgba(184, 255, 216, 0.78);
   cursor: pointer;
   transition: all 0.2s;
 }
