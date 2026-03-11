@@ -1,0 +1,48 @@
+.badge-section { margin-top: 8px; }
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.badge-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 16px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.badge-card.earned {
+  border-color: var(--badge-color);
+  background: color-mix(in srgb, var(--badge-color) 6%, var(--panel));
+}
+.badge-card.earned:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--badge-color) 20%, transparent);
+}
+.badge-card.locked { opacity: 0.4; filter: grayscale(0.8); }
+.badge-icon { font-size: 28px; }
+.badge-name {
+  font-family: var(--font-hud);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.badge-rarity {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+.badge-locked-desc {
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  margin-top: 2px;
+}

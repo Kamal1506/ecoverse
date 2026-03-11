@@ -12,6 +12,8 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
     List<Result> findByUserIdOrderByAttemptedAtDesc(Long userId);
 
+    boolean existsByUserIdAndQuizId(Long userId, Long quizId);
+
     List<Result> findByQuizId(Long quizId);
 
     long countByQuizId(Long quizId);

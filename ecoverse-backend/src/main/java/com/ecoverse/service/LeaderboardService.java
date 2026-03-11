@@ -27,12 +27,18 @@ public class LeaderboardService {
         int rank = 1;
         for (Object[] row : rows) {
             if (rank > 20) break;
+            if (row == null || row.length < 3) continue;
+
+            Long userId = row[0] instanceof Number n ? n.longValue() : null;
+            String name = row[1] != null ? row[1].toString() : null;
+            int totalXp = row[2] instanceof Number n ? n.intValue() : 0;
+
             Map<String, Object> entry = new LinkedHashMap<>();
             entry.put("rank",    rank++);
-            entry.put("userId",  row[0]);
-            entry.put("name",    row[1]);
-            entry.put("totalXp", row[2]);
-            entry.put("level",   calculateLevel((int) row[2]));
+            entry.put("userId",  userId);
+            entry.put("name",    name);
+            entry.put("totalXp", totalXp);
+            entry.put("level",   calculateLevel(totalXp));
             board.add(entry);
         }
         return board;

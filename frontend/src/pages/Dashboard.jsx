@@ -3,60 +3,69 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import HUD from '../components/HUD/HUD';
 import QuizCard from '../components/QuizCard/QuizCard';
+import StreakBanner from '../components/StreakBanner/StreakBanner';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import './Dashboard.css';
 
+const DIFFICULTIES = ['ALL', 'BEGINNER', 'INTERMEDIATE', 'EXPERT'];
+const DIFF_COLORS = { BEGINNER: 'var(--green)', INTERMEDIATE: 'var(--yellow)', EXPERT: 'var(--red)' };
+
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate  = useNavigate();
-  const [quizzes, setQuizzes] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // If admin lands here by mistake, redirect to /admin automatically
-  useEffect(() => {
-    if (user?.role === 'ADMIN') {
-      navigate('/admin', { replace: true });
-    }
-  }, [user, navigate]);
+  const [quizzes,  setQuizzes]  = useState([]);
+  const [loading,  setLoading]  = useState(true);
+  const [filter,   setFilter]   = useState('ALL');
+  const [profile,  setProfile]  = useState(null);
 
   useEffect(() => {
-    fetchQuizzes();
-  }, []);
+    if (user?.role === 'ADMIN') { navigate('/admin', { replace: true }); return; }
+    fetchData();
+  }, [user]);
 
-  const fetchQuizzes = async () => {
+  const fetchData = async () => {
     try {
-      const { data } = await api.get('/quizzes');
-      setQuizzes(data);
-    } catch (err) {
-      toast.error('Failed to load missions. Try again.');
+      const [qRes, pRes] = await Promise.all([
+        api.get('/quizzes'),
+        api.get('/profile/me'),
+      ]);
+      setQuizzes(qRes.data);
+      setProfile(pRes.data);
+    } catch {
+      toast.error('Failed to load data');
     } finally {
       setLoading(false);
     }
   };
 
-  // Don't render dashboard content for admins (they'll be redirected)
   if (user?.role === 'ADMIN') return null;
+
+  const filtered = filter === 'ALL'
+    ? quizzes
+    : quizzes.filter(q => q.difficulty === filter);
 
   return (
     <>
-      <HUD />
+      <HUD streak={profile?.currentStreak} />
       <div className="page-container">
         <div className="dashboard-wrap">
 
-          {/* Welcome banner */}
           <div className="dash-hero">
             <div className="dash-hero-tag">// MISSION CONTROL</div>
             <h1 className="dash-hero-title">
               WELCOME BACK,<br />
               <span className="dash-hero-name">{user?.name?.toUpperCase()}</span>
             </h1>
-            <p className="dash-hero-sub">
-              Choose a mission. Answer correctly. Earn XP. Save the planet.
-            </p>
+            <p className="dash-hero-sub">Choose a mission. Answer correctly. Earn XP. Save the planet.</p>
           </div>
 
-          {/* Stats strip — fixed: show 0 instead of broken icon */}
+          {/* Feature 1: Streak banner */}
+          <StreakBanner
+            streak={profile?.currentStreak || 0}
+            longest={profile?.longestStreak || 0} />
+
+          {/* Stats */}
           <div className="dash-stats">
             <div className="dash-stat">
               <div className="dash-stat-n">{user?.totalXp ?? 0}</div>
@@ -67,39 +76,40 @@ export default function Dashboard() {
               <div className="dash-stat-l">Missions Available</div>
             </div>
             <div className="dash-stat">
-              <div className="dash-stat-n" style={{ color: 'var(--cyan)', fontSize: 22 }}>
-                PLAYER
+              <div className="dash-stat-n" style={{ color: 'var(--cyan)', fontSize: 20 }}>
+                {profile?.badges?.filter(b => b.earned).length || 0} / {profile?.badges?.length || 0}
               </div>
-              <div className="dash-stat-l">Rank</div>
+              <div className="dash-stat-l">Badges Earned</div>
             </div>
           </div>
 
-          {/* Quiz grid */}
-          <div className="section-label">// AVAILABLE MISSIONS</div>
+          {/* Feature 4: Difficulty filter */}
+          <div className="dash-filter-row">
+            <div className="section-label">// AVAILABLE MISSIONS</div>
+            <div className="diff-filters">
+              {DIFFICULTIES.map(d => (
+                <button key={d}
+                  className={`diff-btn${filter === d ? ' active' : ''}`}
+                  style={filter === d ? { borderColor: DIFF_COLORS[d] || 'var(--green)', color: DIFF_COLORS[d] || 'var(--green)' } : {}}
+                  onClick={() => setFilter(d)}>
+                  {d}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {loading ? (
-            <div className="dash-loading">
-              <div className="dash-loading-dot" />
-              <span>LOADING MISSIONS...</span>
-            </div>
-          ) : quizzes.length === 0 ? (
+            <div className="dash-loading"><div className="dash-loading-dot" /><span>LOADING MISSIONS...</span></div>
+          ) : filtered.length === 0 ? (
             <div className="dash-empty">
-              <div style={{ fontSize: 36, marginBottom: 12 }}>🌱</div>
-              <div style={{
-                fontFamily: 'var(--font-hud)', fontSize: 14,
-                color: 'var(--text-dim)', letterSpacing: 2
-              }}>
-                NO MISSIONS AVAILABLE YET
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 8 }}>
-                Check back soon — admins are loading new content.
+              <div style={{ fontSize: 36, marginBottom: 12 }}>{"\uD83C\uDF31"}</div>
+              <div style={{ fontFamily: 'var(--font-hud)', fontSize: 14, color: 'var(--text-dim)', letterSpacing: 2 }}>
+                {filter === 'ALL' ? 'NO MISSIONS AVAILABLE YET' : `NO ${filter} MISSIONS`}
               </div>
             </div>
           ) : (
             <div className="quiz-grid">
-              {quizzes.map(quiz => (
-                <QuizCard key={quiz.id} quiz={quiz} />
-              ))}
+              {filtered.map(quiz => <QuizCard key={quiz.id} quiz={quiz} />)}
             </div>
           )}
 

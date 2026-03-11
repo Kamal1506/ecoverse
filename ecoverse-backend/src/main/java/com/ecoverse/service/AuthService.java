@@ -1,16 +1,15 @@
 package com.ecoverse.service;
 
-import com.ecoverse.dto.AuthDTO.AuthResponse;
-import com.ecoverse.dto.AuthDTO.LoginRequest;
-import com.ecoverse.dto.AuthDTO.RegisterRequest;
+import com.ecoverse.dto.AuthDTO.*;
 import com.ecoverse.entity.User;
+import com.ecoverse.entity.UserStreak;
 import com.ecoverse.repository.UserRepository;
 import com.ecoverse.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -21,77 +20,48 @@ public class AuthService {
     private final UserRepository        userRepository;
     private final PasswordEncoder       passwordEncoder;
     private final JwtUtil               jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    private final StreakService         streakService;
 
-    // ── Register ─────────────────────────────────────────────────────────────
     public AuthResponse register(RegisterRequest request) {
-        String normalizedEmail = request.getEmail().trim().toLowerCase();
-
-        if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new IllegalArgumentException(
-                    "An account with email '" + normalizedEmail + "' already exists.");
-        }
+        if (userRepository.existsByEmail(request.getEmail()))
+            throw new IllegalArgumentException("Email already registered.");
 
         User user = User.builder()
-                .name(request.getName())
-                .email(normalizedEmail)
+                .name(request.getName()).email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(User.Role.USER)   // self-registered users are always USER
-                .totalXp(0)
-                .build();
+                .role(User.Role.USER).totalXp(0).build();
+        userRepository.save(user);
 
-        try {
-            userRepository.save(user);
-        } catch (DataIntegrityViolationException ex) {
-            // Backward compatibility for legacy schemas that still enforce ROLE_* enum values.
-            user.setRole(User.Role.ROLE_USER);
-            userRepository.save(user);
-        }
-        log.info("New player registered: {}", user.getEmail());
-
+        UserStreak streak = streakService.updateStreak(user);
         String token = jwtUtil.generateToken(user.getEmail());
 
-        return AuthResponse.builder()
-                .token(token)
-                .name(user.getName())
-                .email(user.getEmail())
-                .role(user.getRole().normalized())   // ✅ sends "USER" or "ADMIN"
-                .totalXp(user.getTotalXp())
-                .message("Welcome to EcoVerse, " + user.getName() + "!")
-                .build();
+        return buildResponse(user, token, streak, "Welcome to EcoVerse, " + user.getName() + "!");
     }
 
-    // ── Login ─────────────────────────────────────────────────────────────────
     public AuthResponse login(LoginRequest request) {
-        String normalizedEmail = request.getEmail().trim().toLowerCase();
-        String rawPassword = request.getPassword();
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        User user = userRepository.findByEmail(normalizedEmail)
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        boolean passwordMatches = passwordEncoder.matches(rawPassword, user.getPassword());
-
-        // Backward compatibility for legacy plaintext passwords; auto-upgrade to BCrypt after successful login.
-        if (!passwordMatches && rawPassword.equals(user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(rawPassword));
-            userRepository.save(user);
-            passwordMatches = true;
-        }
-
-        if (!passwordMatches) {
-            throw new BadCredentialsException("Email or password is incorrect.");
-        }
-
+        UserStreak streak = streakService.updateStreak(user);
         String token = jwtUtil.generateToken(user.getEmail());
 
-        log.info("Player logged in: {} ({})", user.getEmail(), user.getRole());
+        String msg = streak.getCurrentStreak() > 1
+                ? "Day " + streak.getCurrentStreak() + " streak! Keep it up! \uD83D\uDD25"
+                : "Welcome back, " + user.getName() + "!";
 
+        return buildResponse(user, token, streak, msg);
+    }
+
+    private AuthResponse buildResponse(User user, String token, UserStreak streak, String msg) {
         return AuthResponse.builder()
-                .token(token)
-                .name(user.getName())
-                .email(user.getEmail())
-                .role(user.getRole().normalized())   // ✅ sends "USER" or "ADMIN"
-                .totalXp(user.getTotalXp())
-                .message("Welcome back, " + user.getName() + "!")
-                .build();
+                .token(token).name(user.getName()).email(user.getEmail())
+                .role(user.getRole().name()).totalXp(user.getTotalXp())
+                .currentStreak(streak.getCurrentStreak())
+                .longestStreak(streak.getLongestStreak())
+                .message(msg).build();
     }
 }
