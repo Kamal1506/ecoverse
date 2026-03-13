@@ -2,23 +2,13 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import HUD from '../components/HUD/HUD';
 import api from '../api/axios';
+import { LEVEL_COLORS, xpToNextLevel } from '../constants/levels';
 import toast from 'react-hot-toast';
 import './Leaderboard.css';
-
-const LEVEL_COLORS = {
-  6: '#FFD700',
-  5: '#FF6B35',
-  4: '#00E5FF',
-  3: '#00FF88',
-  2: '#A0FFB0',
-  1: '#5a7a65',
-};
 
 const RANK_MEDALS = { 1: '\uD83E\uDD47', 2: '\uD83E\uDD48', 3: '\uD83E\uDD49' };
 const CROWN = '\uD83D\uDC51';
 const SEEDLING = '\uD83C\uDF31';
-
-const XP_THRESHOLDS = [0, 500, 1200, 2500, 4500, 7000];
 
 export default function Leaderboard() {
   const { user } = useAuth();
@@ -31,13 +21,6 @@ export default function Leaderboard() {
       .catch(() => toast.error('Failed to load leaderboard'))
       .finally(() => setLoading(false));
   }, []);
-
-  const xpToNextLevel = (xp, level) => {
-    if (level >= 6) return 100;
-    const next = XP_THRESHOLDS[level];
-    const curr = XP_THRESHOLDS[level - 1];
-    return Math.min(100, Math.round(((xp - curr) / (next - curr)) * 100));
-  };
 
   return (
     <>

@@ -1,17 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import './QuizCard.css';
 
-const DIFFICULTY = (count) => {
-  if (count <= 5)  return { label: 'EASY',   color: 'var(--green)' };
+const DIFFICULTY = (quiz) => {
+  const diff = String(quiz?.difficulty || '').toUpperCase();
+  if (diff === 'BEGINNER') return { label: 'BEGINNER', color: 'var(--green)' };
+  if (diff === 'INTERMEDIATE') return { label: 'INTERMEDIATE', color: 'var(--yellow)' };
+  if (diff === 'EXPERT') return { label: 'EXPERT', color: 'var(--red)' };
+
+  const count = quiz?.questionCount || 0;
+  if (count <= 5) return { label: 'EASY', color: 'var(--green)' };
   if (count <= 10) return { label: 'MEDIUM', color: 'var(--yellow)' };
-  return               { label: 'HARD',   color: 'var(--red)' };
+  return { label: 'HARD', color: 'var(--red)' };
 };
 
 const ICONS = ['🌍','🌿','♻️','💧','☀️','🌊','🦋','🌱','⚡','🔬'];
 
 export default function QuizCard({ quiz }) {
   const navigate   = useNavigate();
-  const diff       = DIFFICULTY(quiz.questionCount || 0);
+  const diff       = DIFFICULTY(quiz);
   const icon       = ICONS[quiz.id % ICONS.length];
 
   return (

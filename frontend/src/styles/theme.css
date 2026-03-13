@@ -27,6 +27,36 @@
 
   --radius:     2px;
   --transition: all 0.2s ease;
+
+  /* Aliases for new feature UI (keeps EcoVerse look even if generic vars/classes are used) */
+  --primary: var(--green);
+  --primary-dim: var(--green-dim);
+  --secondary: var(--cyan);
+  --accent: var(--yellow);
+  --warning: var(--orange);
+  --danger: var(--red);
+
+  --background: var(--bg);
+  --background-2: var(--bg2);
+  --surface: var(--panel);
+  --surface-border: var(--border);
+
+  --foreground: var(--text);
+  --foreground-muted: var(--text-dim);
+  --foreground-faint: var(--text-muted);
+
+  --shadow-glow: 0 0 28px rgba(0, 255, 136, 0.22);
+
+  /* Layout */
+  --container-xs: 560px;
+  --container-sm: 760px;
+  --container-md: 920px;
+  --container-lg: 1120px;
+
+  /* Toast (used in App.jsx) */
+  --toast-bg: #0a1a0f;
+  --toast-fg: #e0ffe8;
+  --toast-border: rgba(0, 255, 136, 0.2);
 }
 
 html, body {
@@ -95,6 +125,41 @@ a { color: inherit; text-decoration: none; }
 /* Utility classes */
 .mono    { font-family: var(--font-mono); }
 .hud-font { font-family: var(--font-hud); }
+.muted { color: var(--foreground-muted); }
+.faint { color: var(--foreground-faint); }
+
+/* Shared containers (use for new pages/features) */
+.container {
+  width: min(var(--container-lg), 92%);
+  margin: 0 auto;
+}
+.container-sm { width: min(var(--container-sm), 92%); margin: 0 auto; }
+.container-md { width: min(var(--container-md), 92%); margin: 0 auto; }
+.container-lg { width: min(var(--container-lg), 92%); margin: 0 auto; }
+
+.section {
+  padding: 40px 0 80px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 760px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
 
 /* ── Shared button styles ──────────────────────────────────────────────── */
 .btn-primary {
@@ -191,3 +256,52 @@ a { color: inherit; text-decoration: none; }
   height: 1px;
   background: var(--border);
 }
+
+/* Card helper (alias of panel with padding) */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  padding: 18px;
+  position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.75;
+}
+
+/* Inputs (keeps new feature forms consistent) */
+input, select, textarea {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--surface-border);
+  color: var(--foreground);
+  padding: 12px 12px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: var(--transition);
+}
+input::placeholder, textarea::placeholder { color: var(--foreground-faint); }
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(0, 255, 136, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.06);
+}
+
+/* Generic table container (ranking/analytics-like layouts) */
+.eco-table {
+  border: 1px solid var(--surface-border);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.1);
+}
+.eco-table-head {
+  background: rgba(0, 255, 136, 0.04);
+  border-bottom: 1px solid var(--surface-border);
+}
+.eco-table-row {
+  border-bottom: 1px solid rgba(0, 255, 136, 0.04);
+  transition: background 0.2s;
+}
+.eco-table-row:hover { background: rgba(255, 255, 255, 0.02); }
+.eco-table-row:last-child { border-bottom: none; }

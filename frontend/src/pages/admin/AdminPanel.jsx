@@ -8,11 +8,13 @@ import './AdminPanel.css';
 
 const EMPTY_QUESTION = {
   questionText: '', optionA: '', optionB: '',
-  optionC: '', optionD: '', correctOption: 'A'
+  optionC: '', optionD: '', correctOption: 'A',
+  hint: '', explanation: '',
 };
 
 // Which panel is open: 'none' | 'manual' | 'csv'
 const PANEL = { NONE: 'none', MANUAL: 'manual', CSV: 'csv' };
+const DIFFICULTIES = ['BEGINNER', 'INTERMEDIATE', 'EXPERT'];
 
 export default function AdminPanel() {
   const [quizzes, setQuizzes]       = useState([]);
@@ -22,7 +24,7 @@ export default function AdminPanel() {
   const [deletingId, setDeletingId] = useState(null);
 
   const [form, setForm] = useState({
-    title: '', description: '', xpReward: 100,
+    title: '', description: '', difficulty: 'BEGINNER', xpReward: 100,
     questions: [{ ...EMPTY_QUESTION }]
   });
 
@@ -65,7 +67,7 @@ export default function AdminPanel() {
   };
 
   const resetForm = () => {
-    setForm({ title: '', description: '', xpReward: 100, questions: [{ ...EMPTY_QUESTION }] });
+    setForm({ title: '', description: '', difficulty: 'BEGINNER', xpReward: 100, questions: [{ ...EMPTY_QUESTION }] });
     setActivePanel(PANEL.NONE);
   };
 
@@ -87,6 +89,7 @@ export default function AdminPanel() {
       await api.post('/quizzes', {
         title:       form.title.trim(),
         description: form.description.trim(),
+        difficulty:  form.difficulty,
         xpReward:    Number(form.xpReward),
         questions:   form.questions,
       });
@@ -190,6 +193,17 @@ export default function AdminPanel() {
                       type="number" min="10" max="1000"
                       value={form.xpReward} onChange={changeForm} />
                   </div>
+                  <div className="form-group">
+                    <label className="form-label">DIFFICULTY</label>
+                    <select className="form-input form-select"
+                      name="difficulty"
+                      value={form.difficulty}
+                      onChange={changeForm}>
+                      {DIFFICULTIES.map((d) => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="form-group">
@@ -247,6 +261,25 @@ export default function AdminPanel() {
                         <option value="C">C</option>
                         <option value="D">D</option>
                       </select>
+                    </div>
+
+                    <div className="form-row-2">
+                      <div className="form-group">
+                        <label className="form-label">HINT (optional)</label>
+                        <input className="form-input"
+                          name="hint"
+                          placeholder="Clue shown when hint is used..."
+                          value={q.hint}
+                          onChange={e => changeQuestion(i, e)} />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">EXPLANATION (optional)</label>
+                        <input className="form-input"
+                          name="explanation"
+                          placeholder="Shown after answering..."
+                          value={q.explanation}
+                          onChange={e => changeQuestion(i, e)} />
+                      </div>
                     </div>
                   </div>
                 ))}

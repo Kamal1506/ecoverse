@@ -5,10 +5,9 @@ import HUD from '../components/HUD/HUD';
 import BadgeGrid from '../components/BadgeGrid/BadgeGrid';
 import StreakBanner from '../components/StreakBanner/StreakBanner';
 import api from '../api/axios';
+import { RANK_COLORS } from '../constants/ranks';
 import toast from 'react-hot-toast';
 import './Profile.css';
-
-const RANK_COLORS = { S: '#FFD700', A: '#00FF88', B: '#00E5FF', C: '#FF6B35' };
 
 export default function Profile() {
   const { user }        = useAuth();

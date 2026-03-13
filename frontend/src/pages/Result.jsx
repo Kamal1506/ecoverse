@@ -1,14 +1,8 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import HUD from '../components/HUD/HUD';
+import { getRankConfig } from '../constants/ranks';
 import './Result.css';
-
-const RANK_CONFIG = {
-  S: { label: 'LEGENDARY', color: '#FFD700', glow: 'rgba(255,215,0,0.4)', emoji: '\uD83D\uDC51' },
-  A: { label: 'EXCELLENT', color: '#00FF88', glow: 'rgba(0,255,136,0.35)', emoji: '\uD83C\uDF3F' },
-  B: { label: 'GOOD JOB', color: '#00E5FF', glow: 'rgba(0,229,255,0.3)', emoji: '\u267B\uFE0F' },
-  C: { label: 'KEEP GOING', color: '#FF6B35', glow: 'rgba(255,107,53,0.3)', emoji: '\uD83D\uDCAA' },
-};
 
 export default function Result() {
   const { state } = useLocation();
@@ -23,7 +17,7 @@ export default function Result() {
   const result = state.result;
   const quizTitle = state.quizTitle || 'Quiz';
   const rank = result.rank || 'C';
-  const cfg = RANK_CONFIG[rank] || RANK_CONFIG.C;
+  const cfg = getRankConfig(rank);
   const bars = Math.round((result.score / result.totalQuestions) * 10);
   const hasBonus = result.multiplier > 1.0;
 
@@ -62,7 +56,7 @@ export default function Result() {
           </div>
           <div className="result-stat">
             <div className="result-stat-n" style={{ color: '#FFD700' }}>
-              {result.isFirstAttempt ? `+${result.xpEarned}` : '+0'}
+              {result.isFirstAttempt ? `+${result.xpEarned} XP` : '+0 XP'}
             </div>
             <div className="result-stat-l">XP EARNED</div>
           </div>

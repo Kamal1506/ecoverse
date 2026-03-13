@@ -51,9 +51,10 @@ export default function HUD({ streak }) {
       </div>
 
       <div className="hud-right">
-        {!isAdmin && s > 0 && (
+        {s > 0 && (
           <div className="hud-streak" title={`${s} day streak!`}>
-            {"\uD83D\uDD25"} {s}
+            <span className="hud-streak-icon" aria-hidden="true">{"\uD83D\uDD25"}</span>
+            <span className="hud-streak-text">Day {s} streak</span>
           </div>
         )}
         <div className="hud-xp-wrap">
@@ -66,6 +67,7 @@ export default function HUD({ streak }) {
           </div>
         </div>
         <button
+          type="button"
           className="hud-logout"
           onClick={() => { logout(); navigate('/login'); }}
           title="Logout"

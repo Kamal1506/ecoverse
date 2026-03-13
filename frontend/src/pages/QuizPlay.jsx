@@ -24,9 +24,8 @@ export default function QuizPlay() {
   const [answered, setAnswered] = useState(false);
   const [timeLeft, setTimeLeft] = useState(SECONDS);
   const [answers, setAnswers] = useState({});
+  const [hintsUsed, setHintsUsed] = useState({});
   const [sessionXp, setSessionXp] = useState(0);
-  const [hintUsed, setHintUsed] = useState(false);
-  const [showHint, setShowHint] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [autoAdvancing, setAutoAdvancing] = useState(false);
 
@@ -41,6 +40,7 @@ export default function QuizPlay() {
       try {
         const [qRes, listRes] = await Promise.all([api.get(`/quizzes/${id}/questions`), api.get('/quizzes')]);
         setQuestions(qRes.data);
+        setHintsUsed({});
         const quiz = listRes.data.find((q) => String(q.id) === String(id));
         if (quiz) setQuizTitle(quiz.title);
       } catch {
@@ -60,7 +60,11 @@ export default function QuizPlay() {
       Object.entries(answersSource).forEach(([qId, letter]) => {
         if (letter !== '__TIMEOUT__') answersMap[Number(qId)] = letter;
       });
-      const { data } = await api.post(`/quizzes/${id}/attempt`, { answers: answersMap });
+      const hintsUsedMap = {};
+      Object.entries(hintsUsed).forEach(([qId, used]) => {
+        if (used && answersMap[Number(qId)] != null) hintsUsedMap[Number(qId)] = true;
+      });
+      const { data } = await api.post(`/quizzes/${id}/attempt`, { answers: answersMap, hintsUsed: hintsUsedMap });
       updateXp(data.xpEarned);
       navigate('/result', { state: { result: data, quizTitle } });
     } catch {
@@ -106,8 +110,6 @@ export default function QuizPlay() {
     answeredRef.current = false;
     setAnswered(false);
     setSelected(null);
-    setHintUsed(false);
-    setShowHint(false);
     setTimeLeft(SECONDS);
     setAutoAdvancing(false);
 
@@ -147,7 +149,8 @@ export default function QuizPlay() {
       return nextAnswers;
     });
 
-    const bonus = Math.floor((50 + (timeLeft / SECONDS) * 30) * (hintUsed ? 0.5 : 1));
+    const usedHint = Boolean(hintsUsed[q.id]);
+    const bonus = Math.floor((50 + (timeLeft / SECONDS) * 30) * (usedHint ? 0.5 : 1));
     setSessionXp((x) => x + bonus);
     const rect = optionRef.current?.getBoundingClientRect();
     if (rect) spawnXp(bonus, rect.left + rect.width / 2, rect.top + 40);
@@ -156,9 +159,11 @@ export default function QuizPlay() {
   };
 
   const useHint = () => {
-    if (hintUsed || answered) return;
-    setHintUsed(true);
-    setShowHint(true);
+    if (answered) return;
+    const q = questions[qIdx];
+    if (!q?.id) return;
+    if (hintsUsed[q.id]) return;
+    setHintsUsed((prev) => ({ ...prev, [q.id]: true }));
     toast('\uD83D\uDCA1 Hint used \u2014 XP halved for this question', { icon: '\uD83D\uDCA1' });
   };
 
@@ -188,6 +193,7 @@ export default function QuizPlay() {
   const q = questions[qIdx];
   const progress = ((qIdx + 1) / questions.length) * 100;
   const isWarn = timeLeft <= 10;
+  const usedHint = Boolean(hintsUsed[q?.id]);
 
   return (
     <>
@@ -225,7 +231,7 @@ export default function QuizPlay() {
 
         {q.hint && !answered && (
           <div className="hint-row">
-            {!showHint ? (
+            {!usedHint ? (
               <button className="hint-btn" onClick={useHint}>
                 {'\uD83D\uDCA1'} USE HINT <span style={{ color: 'var(--yellow)', marginLeft: 6 }}>(-50% XP)</span>
               </button>

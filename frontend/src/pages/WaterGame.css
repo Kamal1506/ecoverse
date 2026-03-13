@@ -1,0 +1,118 @@
+.ww-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+.ww-header { padding: 36px 0 24px; }
+.ww-title {
+  font-family: var(--font-hud);
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.ww-sub { font-size: 14px; color: var(--text-dim); }
+
+/* Level buttons */
+.ww-levels {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.ww-level-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 7px 18px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ww-level-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.ww-level-btn.active {
+  background: rgba(0,229,255,0.08);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* Stats */
+.ww-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.ww-stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 16px;
+  text-align: center;
+}
+.ww-stat-n {
+  font-family: var(--font-hud);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--cyan);
+  line-height: 1;
+}
+.ww-stat-l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+/* Win panel */
+.ww-win {
+  background: rgba(0,229,255,0.05);
+  border: 1px solid rgba(0,229,255,0.3);
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.ww-win-emoji { font-size: 44px; margin-bottom: 12px; }
+.ww-win-title {
+  font-family: var(--font-hud);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.ww-win-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+.ww-win-btns { display: flex; gap: 12px; justify-content: center; }
+
+/* Canvas */
+.ww-canvas-wrap {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.ww-canvas {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  image-rendering: crisp-edges;
+}
+
+.ww-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+}

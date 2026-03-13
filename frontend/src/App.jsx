@@ -10,6 +10,8 @@ import QuizPlay    from './pages/QuizPlay';
 import Result      from './pages/Result';
 import Profile     from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
+import WasteGame   from './pages/WasteGame';
+import WaterGame   from './pages/WaterGame';
 import AdminPanel  from './pages/admin/AdminPanel';
 import Analytics   from './pages/admin/Analytics';
 
@@ -23,15 +25,17 @@ export default function App() {
             fontFamily: 'Rajdhani, sans-serif', fontWeight: 600 },
         }} />
         <Routes>
-          <Route path="/login"    element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard"   element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/quiz/:id"    element={<ProtectedRoute><QuizPlay /></ProtectedRoute>} />
-          <Route path="/result"      element={<ProtectedRoute><Result /></ProtectedRoute>} />
-          <Route path="/profile"     element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
-          <Route path="/admin"       element={<ProtectedRoute requiredRole="ADMIN"><AdminPanel /></ProtectedRoute>} />
-          <Route path="/analytics"   element={<ProtectedRoute requiredRole="ADMIN"><Analytics /></ProtectedRoute>} />
+          <Route path="/login"      element={<Login />} />
+          <Route path="/register"   element={<Register />} />
+          <Route path="/dashboard"  element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/quiz/:id"   element={<ProtectedRoute><QuizPlay /></ProtectedRoute>} />
+          <Route path="/result"     element={<ProtectedRoute><Result /></ProtectedRoute>} />
+          <Route path="/profile"    element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/leaderboard"element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+          <Route path="/game/waste" element={<ProtectedRoute><WasteGame /></ProtectedRoute>} />
+          <Route path="/game/water" element={<ProtectedRoute><WaterGame /></ProtectedRoute>} />
+          <Route path="/admin"      element={<ProtectedRoute requiredRole="ADMIN"><AdminPanel /></ProtectedRoute>} />
+          <Route path="/analytics"  element={<ProtectedRoute requiredRole="ADMIN"><Analytics /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
