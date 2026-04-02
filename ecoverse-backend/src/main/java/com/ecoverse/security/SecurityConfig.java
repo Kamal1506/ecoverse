@@ -1,6 +1,7 @@
 package com.ecoverse.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,8 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final UserDetailsServiceImpl userDetailsService;
+    @Value("${frontend.url:https://ecoverse-lemon.vercel.app}")
+    private String frontendUrl;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,6 +52,7 @@ public class SecurityConfig {
 
                         // Auth endpoints: public
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Admin-only routes
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -72,10 +76,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOrigins(List.of(
+                "https://ecoverse-lemon.vercel.app",
+                "http://localhost:5173",
+                frontendUrl
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(false);
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
