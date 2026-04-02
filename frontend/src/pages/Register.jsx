@@ -118,7 +118,6 @@ const GoogleRegisterButton = memo(function GoogleRegisterButton({ onSuccess, onE
       shape="rectangular"
       size="large"
       text="signup_with_google"
-      width={320}
     />
   );
 });

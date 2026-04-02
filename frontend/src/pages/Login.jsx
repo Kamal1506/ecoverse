@@ -110,7 +110,6 @@ const GoogleLoginButton = memo(function GoogleLoginButton({ onSuccess, onError }
       shape="rectangular"
       size="large"
       text="signin_with_google"
-      width={320}
     />
   );
 });

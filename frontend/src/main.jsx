@@ -13,13 +13,11 @@ if (!hasGoogleClientId) {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    {hasGoogleClientId ? (
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <App />
-      </GoogleOAuthProvider>
-    ) : (
+  hasGoogleClientId ? (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <App />
-    )}
-  </React.StrictMode>
+    </GoogleOAuthProvider>
+  ) : (
+    <App />
+  )
 );
