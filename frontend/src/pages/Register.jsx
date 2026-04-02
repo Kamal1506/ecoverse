@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
@@ -28,7 +28,7 @@ export default function Register() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
+  const handleGoogleSuccess = useCallback(async (credentialResponse) => {
     setLoading(true);
     try {
       const data = await googleLogin(credentialResponse.credential);
@@ -39,7 +39,11 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [googleLogin, navigate]);
+
+  const handleGoogleError = useCallback(() => {
+    toast.error('Google signup failed.');
+  }, []);
 
   return (
     <div className="auth-page">
@@ -89,14 +93,9 @@ export default function Register() {
             </div>
 
             <div className="google-btn-wrap">
-              <GoogleLogin
+              <GoogleRegisterButton
                 onSuccess={handleGoogleSuccess}
-                onError={() => toast.error('Google signup failed.')}
-                theme="filled_black"
-                shape="rectangular"
-                size="large"
-                text="signup_with_google"
-                width="100%"
+                onError={handleGoogleError}
               />
             </div>
           </>
@@ -109,3 +108,17 @@ export default function Register() {
     </div>
   );
 }
+
+const GoogleRegisterButton = memo(function GoogleRegisterButton({ onSuccess, onError }) {
+  return (
+    <GoogleLogin
+      onSuccess={onSuccess}
+      onError={onError}
+      theme="filled_black"
+      shape="rectangular"
+      size="large"
+      text="signup_with_google"
+      width={320}
+    />
+  );
+});

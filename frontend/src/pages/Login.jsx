@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
@@ -27,7 +27,7 @@ export default function Login() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
+  const handleGoogleSuccess = useCallback(async (credentialResponse) => {
     setLoading(true);
     try {
       const data = await googleLogin(credentialResponse.credential);
@@ -38,7 +38,11 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [googleLogin, navigate]);
+
+  const handleGoogleError = useCallback(() => {
+    toast.error('Google login failed.');
+  }, []);
 
   return (
     <div className="auth-page">
@@ -81,14 +85,9 @@ export default function Login() {
 
             {/* Google Login Button */}
             <div className="google-btn-wrap">
-              <GoogleLogin
+              <GoogleLoginButton
                 onSuccess={handleGoogleSuccess}
-                onError={() => toast.error('Google login failed.')}
-                theme="filled_black"
-                shape="rectangular"
-                size="large"
-                text="signin_with_google"
-                width="100%"
+                onError={handleGoogleError}
               />
             </div>
           </>
@@ -101,3 +100,17 @@ export default function Login() {
     </div>
   );
 }
+
+const GoogleLoginButton = memo(function GoogleLoginButton({ onSuccess, onError }) {
+  return (
+    <GoogleLogin
+      onSuccess={onSuccess}
+      onError={onError}
+      theme="filled_black"
+      shape="rectangular"
+      size="large"
+      text="signin_with_google"
+      width={320}
+    />
+  );
+});
