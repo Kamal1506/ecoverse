@@ -3,7 +3,15 @@ import axios from 'axios';
 // Base URL — during dev, Vite proxies /api → localhost:8080
 // In production, set VITE_API_URL in .env
 const defaultDevApiBase = 'http://localhost:8080/api';
-const baseURL = import.meta.env.VITE_API_URL ||
+const configuredBase = (import.meta.env.VITE_API_URL || '').trim();
+
+function normalizeApiBase(url) {
+  if (!url) return '';
+  const trimmed = url.replace(/\/+$/, '');
+  return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+}
+
+const baseURL = normalizeApiBase(configuredBase) ||
   (import.meta.env.DEV ? defaultDevApiBase : '/api');
 
 const api = axios.create({
