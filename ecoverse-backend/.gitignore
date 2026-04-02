@@ -44,3 +44,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+.m2home/
+.m2/
+.userhome/
+target/
