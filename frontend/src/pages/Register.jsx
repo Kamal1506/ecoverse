@@ -35,7 +35,7 @@ export default function Register() {
       toast.success(data.message || 'Welcome to EcoVerse!');
       navigate('/dashboard');
     } catch (err) {
-      toast.error('Google signup failed. Please try again.');
+      toast.error(err.response?.data?.message || 'Google signup failed. Please try again.');
     } finally {
       setLoading(false);
     }

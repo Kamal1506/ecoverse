@@ -34,7 +34,7 @@ export default function Login() {
       toast.success(data.message || 'Welcome!');
       navigate(data.role === 'ADMIN' ? '/admin' : '/dashboard');
     } catch (err) {
-      toast.error('Google login failed. Please try again.');
+      toast.error(err.response?.data?.message || 'Google login failed. Please try again.');
     } finally {
       setLoading(false);
     }
