@@ -11,6 +11,7 @@ export default function Login() {
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [loading,  setLoading]  = useState(false);
+  const hasGoogleClientId = Boolean((import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,25 +70,29 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Divider */}
-        <div className="auth-divider">
-          <span className="auth-divider-line" />
-          <span className="auth-divider-text">OR</span>
-          <span className="auth-divider-line" />
-        </div>
+        {hasGoogleClientId && (
+          <>
+            {/* Divider */}
+            <div className="auth-divider">
+              <span className="auth-divider-line" />
+              <span className="auth-divider-text">OR</span>
+              <span className="auth-divider-line" />
+            </div>
 
-        {/* Google Login Button */}
-        <div className="google-btn-wrap">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => toast.error('Google login failed.')}
-            theme="filled_black"
-            shape="rectangular"
-            size="large"
-            text="signin_with_google"
-            width="100%"
-          />
-        </div>
+            {/* Google Login Button */}
+            <div className="google-btn-wrap">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => toast.error('Google login failed.')}
+                theme="filled_black"
+                shape="rectangular"
+                size="large"
+                text="signin_with_google"
+                width="100%"
+              />
+            </div>
+          </>
+        )}
 
         <p className="auth-switch">
           No account? <Link className="auth-link" to="/register">Create one</Link>

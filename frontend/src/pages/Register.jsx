@@ -12,6 +12,7 @@ export default function Register() {
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [loading,  setLoading]  = useState(false);
+  const hasGoogleClientId = Boolean((import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,23 +80,27 @@ export default function Register() {
           </button>
         </form>
 
-        <div className="auth-divider">
-          <span className="auth-divider-line" />
-          <span className="auth-divider-text">OR</span>
-          <span className="auth-divider-line" />
-        </div>
+        {hasGoogleClientId && (
+          <>
+            <div className="auth-divider">
+              <span className="auth-divider-line" />
+              <span className="auth-divider-text">OR</span>
+              <span className="auth-divider-line" />
+            </div>
 
-        <div className="google-btn-wrap">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => toast.error('Google signup failed.')}
-            theme="filled_black"
-            shape="rectangular"
-            size="large"
-            text="signup_with_google"
-            width="100%"
-          />
-        </div>
+            <div className="google-btn-wrap">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => toast.error('Google signup failed.')}
+                theme="filled_black"
+                shape="rectangular"
+                size="large"
+                text="signup_with_google"
+                width="100%"
+              />
+            </div>
+          </>
+        )}
 
         <p className="auth-switch">
           Already have an account? <Link className="auth-link" to="/login">Sign in</Link>
