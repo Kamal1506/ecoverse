@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -75,20 +76,34 @@ public class SecurityConfig {
     // ── CORS: Allow React dev server ────────────────────────────────────────
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        String configuredFrontend = normalizeOrigin(frontendUrl);
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
-                "https://ecoverse-lemon.vercel.app",
-                "http://localhost:5173",
-                frontendUrl
-        ));
+        List<String> allowedOrigins = new ArrayList<>();
+        allowedOrigins.add("https://ecoverse-lemon.vercel.app");
+        allowedOrigins.add("http://localhost:5173");
+        if (!configuredFrontend.isBlank()) {
+            allowedOrigins.add(configuredFrontend);
+        }
+
+        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedOriginPatterns(List.of("https://*.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(false);
+        config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    private String normalizeOrigin(String origin) {
+        if (origin == null) return "";
+        String trimmed = origin.trim();
+        while (trimmed.endsWith("/")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1);
+        }
+        return trimmed;
     }
 
     // ── BCrypt password encoder (strength 12) ───────────────────────────────
