@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -36,9 +38,6 @@ public class GoogleAuthService {
     public AuthResponse authenticateGoogleUser(String idTokenString) {
         // Step 1: Verify the token with Google
         GoogleIdToken.Payload payload = verifyToken(idTokenString);
-        if (payload == null) {
-            throw new IllegalArgumentException("Invalid Google token. Please try again.");
-        }
 
         // Step 2: Extract user info from verified token
         String email      = payload.getEmail();
@@ -96,12 +95,29 @@ public class GoogleAuthService {
     }
 
     private GoogleIdToken.Payload verifyToken(String idTokenString) {
+        String configuredClientId = googleClientId == null ? "" : googleClientId.trim();
+        if (configuredClientId.isEmpty()) {
+            throw new IllegalArgumentException("Google sign-in is not configured on server.");
+        }
+
         try {
+            GoogleIdToken parsed = GoogleIdToken.parse(new GsonFactory(), idTokenString);
+            if (parsed == null || parsed.getPayload() == null) {
+                throw new IllegalArgumentException("Invalid Google token. Please try again.");
+            }
+
+            Object audObj = parsed.getPayload().get("aud");
+            String aud = audObj == null ? "" : String.valueOf(audObj).trim();
+            if (!Objects.equals(aud, configuredClientId)) {
+                log.warn("Google token audience mismatch. tokenAud={}, configuredClientId={}", aud, configuredClientId);
+                throw new IllegalArgumentException("Google token audience mismatch. Please recheck Google client configuration.");
+            }
+
             GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
                     new NetHttpTransport(),
                     new GsonFactory()
             )
-            .setAudience(Collections.singletonList(googleClientId))
+            .setAudience(List.of(configuredClientId))
             .build();
 
             GoogleIdToken idToken = verifier.verify(idTokenString);
@@ -111,6 +127,7 @@ public class GoogleAuthService {
         } catch (Exception e) {
             log.error("Google token verification failed: {}", e.getMessage());
         }
-        return null;
+
+        throw new IllegalArgumentException("Invalid Google token. Please try again.");
     }
 }
