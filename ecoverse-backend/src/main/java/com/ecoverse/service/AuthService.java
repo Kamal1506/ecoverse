@@ -59,7 +59,7 @@ public class AuthService {
     private AuthResponse buildResponse(User user, String token, UserStreak streak, String msg) {
         return AuthResponse.builder()
                 .token(token).name(user.getName()).email(user.getEmail())
-                .role(user.getRole().name()).totalXp(user.getTotalXp())
+                .role(user.getRole().normalized()).totalXp(user.getTotalXp())
                 .currentStreak(streak.getCurrentStreak())
                 .longestStreak(streak.getLongestStreak())
                 .message(msg).build();

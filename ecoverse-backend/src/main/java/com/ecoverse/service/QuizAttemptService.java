@@ -46,10 +46,19 @@ public class QuizAttemptService {
                 .collect(Collectors.toMap(Question::getId, Question::getCorrectOption));
 
         int correctCount = 0;
+        double xpBase = 0.0;
         for (Map.Entry<Long, String> entry : request.getAnswers().entrySet()) {
             String selected = entry.getValue() != null ? entry.getValue().toUpperCase().trim() : "";
             String correct  = correctAnswers.get(entry.getKey());
-            if (correct != null && correct.equals(selected)) correctCount++;
+            if (correct != null && correct.equals(selected)) {
+                correctCount++;
+
+                boolean hintUsed = request.getHintsUsed() != null
+                        && Boolean.TRUE.equals(request.getHintsUsed().get(entry.getKey()));
+                double perQuestionXp = quiz.getXpReward() != null ? quiz.getXpReward() : 100;
+                if (hintUsed) perQuestionXp *= 0.5;
+                xpBase += perQuestionXp;
+            }
         }
 
         int totalQuestions = questions.size();
@@ -63,7 +72,7 @@ public class QuizAttemptService {
                     .map(UserStreak::getXpMultiplier).orElse(1.0);
         }
         int xpEarned = isFirstAttempt
-                ? (int) Math.round(correctCount * quiz.getXpReward() * multiplier)
+                ? (int) Math.round(xpBase * multiplier)
                 : 0;   // Feature 3: No XP on replay
 
         List<AttemptReviewItem> review = questions.stream()

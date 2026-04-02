@@ -18,6 +18,8 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
     long countByQuizId(Long quizId);
 
-    @Query("SELECT u.id, u.name, u.totalXp FROM User u ORDER BY u.totalXp DESC")
+    void deleteByQuizId(Long quizId);
+
+    @Query("SELECT u.id, u.name, u.totalXp, u.pictureUrl FROM User u ORDER BY u.totalXp DESC")
     List<Object[]> findLeaderboard();
 }

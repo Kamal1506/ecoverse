@@ -185,7 +185,7 @@ export default function QuizPlay() {
       <>
         <HUD />
         <div className="quiz-loading">
-          <span style={{ color: 'var(--red)' }}>No questions found.</span>
+          <span className="quiz-empty-text">No questions found.</span>
         </div>
       </>
     );
@@ -203,15 +203,15 @@ export default function QuizPlay() {
         <div className="quiz-topbar">
           <div className="quiz-progress-wrap">
             <div className="quiz-progress-label">
-              <span className="mono" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-dim)' }}>
+              <span className="mono quiz-progress-meta">
                 {quizTitle}
               </span>
-              <span className="mono" style={{ fontSize: 10, letterSpacing: 2, color: 'var(--text-dim)' }}>
+              <span className="mono quiz-progress-meta">
                 {qIdx + 1} / {questions.length}
               </span>
             </div>
             <div className="quiz-progress-track">
-              <div className="quiz-progress-fill" style={{ width: `${progress}%` }} />
+              <progress className="quiz-progress-fill" max="100" value={progress} />
             </div>
           </div>
           <div className={`quiz-timer${isWarn ? ' warn' : ''}`}>
@@ -233,7 +233,7 @@ export default function QuizPlay() {
           <div className="hint-row">
             {!usedHint ? (
               <button className="hint-btn" onClick={useHint}>
-                {'\uD83D\uDCA1'} USE HINT <span style={{ color: 'var(--yellow)', marginLeft: 6 }}>(-50% XP)</span>
+                {'\uD83D\uDCA1'} USE HINT <span className="hint-penalty">(-50% XP)</span>
               </button>
             ) : (
               <div className="hint-box">

@@ -32,11 +32,13 @@ public class LeaderboardService {
             Long userId = row[0] instanceof Number n ? n.longValue() : null;
             String name = row[1] != null ? row[1].toString() : null;
             int totalXp = row[2] instanceof Number n ? n.intValue() : 0;
+            String pictureUrl = (row.length > 3 && row[3] != null) ? row[3].toString() : null;
 
             Map<String, Object> entry = new LinkedHashMap<>();
             entry.put("rank",    rank++);
             entry.put("userId",  userId);
             entry.put("name",    name);
+            entry.put("pictureUrl", pictureUrl);
             entry.put("totalXp", totalXp);
             entry.put("level",   calculateLevel(totalXp));
             board.add(entry);

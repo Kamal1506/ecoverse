@@ -9,6 +9,7 @@ import './Leaderboard.css';
 const RANK_MEDALS = { 1: '\uD83E\uDD47', 2: '\uD83E\uDD48', 3: '\uD83E\uDD49' };
 const CROWN = '\uD83D\uDC51';
 const SEEDLING = '\uD83C\uDF31';
+const getInitial = (name) => (name?.trim()?.charAt(0)?.toUpperCase() || '?');
 
 export default function Leaderboard() {
   const { user } = useAuth();
@@ -104,7 +105,11 @@ export default function Leaderboard() {
 
                     <div className="lbc lb-player-cell">
                       <div className="lb-avatar" style={{ borderColor: color, color }}>
-                        {player.name?.charAt(0).toUpperCase()}
+                        {player.pictureUrl ? (
+                          <img src={player.pictureUrl} alt={player.name} className="lb-avatar-img" />
+                        ) : (
+                          getInitial(player.name)
+                        )}
                       </div>
                       <div>
                         <div className="lb-player-name">

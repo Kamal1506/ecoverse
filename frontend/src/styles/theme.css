@@ -57,13 +57,22 @@
   --toast-bg: #0a1a0f;
   --toast-fg: #e0ffe8;
   --toast-border: rgba(0, 255, 136, 0.2);
+
+  /* Responsive breakpoints */
+  --bp-sm: 30rem;   /* 480px */
+  --bp-md: 48rem;   /* 768px */
+  --bp-lg: 64rem;   /* 1024px */
+
+  --page-pad-inline: clamp(0.875rem, 3vw, 1.5rem);
+  --page-pad-block: clamp(1rem, 3.5vw, 2.5rem);
+  --hud-height: 4.25rem;
 }
 
 html, body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: clamp(15px, 0.35vw + 14px, 18px);
   line-height: 1.5;
   min-height: 100vh;
   overflow-x: hidden;
@@ -108,6 +117,8 @@ button {
   font-family: var(--font-body);
   border: none;
   background: none;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
 }
 
 input { font-family: var(--font-body); }
@@ -119,7 +130,9 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   z-index: 1;
   min-height: 100vh;
-  padding-top: 64px;
+  padding-top: var(--hud-height);
+  width: 100%;
+  overflow-x: clip;
 }
 
 /* Utility classes */
@@ -130,15 +143,15 @@ a { color: inherit; text-decoration: none; }
 
 /* Shared containers (use for new pages/features) */
 .container {
-  width: min(var(--container-lg), 92%);
+  width: min(var(--container-lg), 100% - (var(--page-pad-inline) * 2));
   margin: 0 auto;
 }
-.container-sm { width: min(var(--container-sm), 92%); margin: 0 auto; }
-.container-md { width: min(var(--container-md), 92%); margin: 0 auto; }
-.container-lg { width: min(var(--container-lg), 92%); margin: 0 auto; }
+.container-sm { width: min(var(--container-sm), 100% - (var(--page-pad-inline) * 2)); margin: 0 auto; }
+.container-md { width: min(var(--container-md), 100% - (var(--page-pad-inline) * 2)); margin: 0 auto; }
+.container-lg { width: min(var(--container-lg), 100% - (var(--page-pad-inline) * 2)); margin: 0 auto; }
 
 .section {
-  padding: 40px 0 80px;
+  padding: clamp(1.75rem, 4vw, 2.5rem) 0 clamp(3rem, 6vw, 5rem);
 }
 
 .stack {
@@ -164,11 +177,11 @@ a { color: inherit; text-decoration: none; }
 /* ── Shared button styles ──────────────────────────────────────────────── */
 .btn-primary {
   font-family: var(--font-hud);
-  font-size: 13px;
+  font-size: clamp(0.72rem, 0.2vw + 0.66rem, 0.82rem);
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  padding: 14px 32px;
+  padding: 0.8rem 1.4rem;
   background: var(--green);
   color: var(--bg);
   border: none;
@@ -189,11 +202,11 @@ a { color: inherit; text-decoration: none; }
 
 .btn-ghost {
   font-family: var(--font-hud);
-  font-size: 12px;
+  font-size: clamp(0.7rem, 0.18vw + 0.64rem, 0.78rem);
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  padding: 13px 26px;
+  padding: 0.75rem 1.25rem;
   background: transparent;
   color: var(--text-dim);
   border: 1px solid var(--border);
@@ -278,7 +291,7 @@ input, select, textarea {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--surface-border);
   color: var(--foreground);
-  padding: 12px 12px;
+  padding: 0.75rem;
   border-radius: var(--radius);
   outline: none;
   transition: var(--transition);
@@ -305,3 +318,14 @@ input:focus, select:focus, textarea:focus {
 }
 .eco-table-row:hover { background: rgba(255, 255, 255, 0.02); }
 .eco-table-row:last-child { border-bottom: none; }
+
+img, picture, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --hud-height: 5.25rem;
+  }
+}

@@ -5,9 +5,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+    },
+
     proxy: {
-      // Any request to /api/* gets forwarded to Spring Boot on :8080
-      // This eliminates CORS issues during development
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,

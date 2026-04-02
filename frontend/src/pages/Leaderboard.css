@@ -8,7 +8,7 @@
 .lb-wrap {
   max-width: 860px;
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 1.25rem 0.875rem 3rem;
 }
 
 /* Header */
@@ -34,9 +34,9 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 0;
-  margin-bottom: 40px;
-  height: 220px;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+  height: 170px;
 }
 
 .podium-slot {
@@ -101,6 +101,7 @@
 .lb-table {
   border: 1px solid var(--border);
   overflow: hidden;
+  overflow-x: auto;
 }
 
 .lb-head {
@@ -110,6 +111,7 @@
   border-bottom: 1px solid var(--border);
   padding: 10px 20px;
   gap: 8px;
+  min-width: 700px;
 }
 
 .lb-row {
@@ -121,6 +123,7 @@
   align-items: center;
   animation: rowIn 0.4s ease both;
   transition: background 0.2s;
+  min-width: 700px;
 }
 .lb-row:last-child { border-bottom: none; }
 .lb-row:hover { background: rgba(255,255,255,0.02); }
@@ -175,6 +178,13 @@
   font-weight: 700;
   flex-shrink: 0;
   background: rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+.lb-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .lb-player-name {
@@ -247,4 +257,36 @@
   font-size: 12px;
   letter-spacing: 3px;
   color: var(--text-dim);
+}
+
+@media (max-width: 30rem) {
+  .lb-podium {
+    height: auto;
+    align-items: stretch;
+  }
+  .podium-slot {
+    max-width: 33%;
+  }
+  .podium-name {
+    font-size: 0.72rem;
+  }
+  .podium-block {
+    font-size: 1.2rem;
+  }
+}
+
+@media (min-width: 30.0625rem) {
+  .lb-wrap {
+    padding: 1.5rem 1rem 3.5rem;
+  }
+}
+
+@media (min-width: 48.0625rem) {
+  .lb-wrap {
+    padding: 2rem 1.25rem 4.25rem;
+  }
+  .lb-podium {
+    height: 210px;
+    margin-bottom: 2rem;
+  }
 }

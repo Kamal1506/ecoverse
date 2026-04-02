@@ -53,8 +53,13 @@ export default function WasteGame() {
   const [feedback,   setFeedback]    = useState(null); // { msg, type }
   const [done,       setDone]        = useState(false);
   const [overBin,    setOverBin]     = useState(null);
+  const [touchDrag,  setTouchDrag]   = useState(null); // { itemId, x, y }
+  const [isTouchMode, setIsTouchMode] = useState(false);
   const dragId = useRef(null);
   const fbTimer = useRef(null);
+  const touchPointerId = useRef(null);
+  const autoScrollRaf = useRef(null);
+  const autoScrollStep = useRef(0);
 
   const remaining = items.filter(i => !placements[i.id]);
   const placed    = (binId) => items.filter(i => placements[i.id]?.binId === binId);
@@ -93,21 +98,118 @@ export default function WasteGame() {
     setFeedback(null);
     setDone(false);
     setOverBin(null);
+    setTouchDrag(null);
+    touchPointerId.current = null;
+    autoScrollStep.current = 0;
+    if (autoScrollRaf.current) {
+      cancelAnimationFrame(autoScrollRaf.current);
+      autoScrollRaf.current = null;
+    }
   };
 
   const pct = Math.round((correct / ITEMS.length) * 100);
+
+  const getBinIdAtPoint = (x, y) => {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    const binEl = el.closest('[data-bin-id]');
+    return binEl?.getAttribute('data-bin-id') || null;
+  };
+
+  const startTouchDrag = (e, itemId) => {
+    if (e.pointerType !== 'touch' || placements[itemId]) return;
+    e.preventDefault();
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    touchPointerId.current = e.pointerId;
+    setIsTouchMode(true);
+    setSelected(itemId);
+    setTouchDrag({ itemId, x: e.clientX, y: e.clientY });
+  };
+
+  const stopAutoScroll = () => {
+    autoScrollStep.current = 0;
+    if (autoScrollRaf.current) {
+      cancelAnimationFrame(autoScrollRaf.current);
+      autoScrollRaf.current = null;
+    }
+  };
+
+  const runAutoScroll = () => {
+    if (!autoScrollStep.current) {
+      autoScrollRaf.current = null;
+      return;
+    }
+    window.scrollBy(0, autoScrollStep.current);
+    autoScrollRaf.current = requestAnimationFrame(runAutoScroll);
+  };
+
+  const updateAutoScroll = (y) => {
+    const edge = 88;
+    const maxStep = 14;
+    let step = 0;
+    if (y > window.innerHeight - edge) {
+      const ratio = (y - (window.innerHeight - edge)) / edge;
+      step = Math.ceil(Math.min(1, ratio) * maxStep);
+    } else if (y < edge) {
+      const ratio = (edge - y) / edge;
+      step = -Math.ceil(Math.min(1, ratio) * maxStep);
+    }
+    autoScrollStep.current = step;
+    if (!step) {
+      if (autoScrollRaf.current) {
+        cancelAnimationFrame(autoScrollRaf.current);
+        autoScrollRaf.current = null;
+      }
+      return;
+    }
+    if (!autoScrollRaf.current) {
+      autoScrollRaf.current = requestAnimationFrame(runAutoScroll);
+    }
+  };
+
+  const moveTouchDrag = (e) => {
+    if (e.pointerId !== touchPointerId.current || !touchDrag) return;
+    const binId = getBinIdAtPoint(e.clientX, e.clientY);
+    setTouchDrag({ itemId: touchDrag.itemId, x: e.clientX, y: e.clientY });
+    setOverBin(binId);
+    updateAutoScroll(e.clientY);
+  };
+
+  const endTouchDrag = (e) => {
+    if (e.pointerId !== touchPointerId.current || !touchDrag) return;
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    const binId = getBinIdAtPoint(e.clientX, e.clientY);
+    if (binId) place(touchDrag.itemId, binId);
+    setTouchDrag(null);
+    setOverBin(null);
+    touchPointerId.current = null;
+    stopAutoScroll();
+  };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(fbTimer.current);
+      stopAutoScroll();
+    };
+  }, []);
+
+  const touchItem = touchDrag ? items.find(i => i.id === touchDrag.itemId) : null;
 
   return (
     <>
       <HUD />
       <div className="page-container">
-        <div className="wg-wrap">
+        <div className={`wg-wrap${touchDrag ? ' wg-touch-active' : ''}`}>
 
           {/* Header */}
           <div className="wg-header">
             <div className="section-label">// MINI GAME</div>
             <h1 className="wg-title">♻️ WASTE SORTER</h1>
-            <p className="wg-sub">Drag items to the correct bin — or tap an item, then tap a bin.</p>
+            <p className="wg-sub">
+              {isTouchMode
+                ? 'Touch and drag an item into a bin, or tap item then tap bin.'
+                : 'Drag items to the correct bin — or tap an item, then tap a bin.'}
+            </p>
           </div>
 
           {/* Stats */}
@@ -143,6 +245,10 @@ export default function WasteGame() {
                     draggable
                     onDragStart={() => { dragId.current = item.id; }}
                     onDragEnd={() => { dragId.current = null; }}
+                    onPointerDown={(e) => startTouchDrag(e, item.id)}
+                    onPointerMove={moveTouchDrag}
+                    onPointerUp={endTouchDrag}
+                    onPointerCancel={endTouchDrag}
                     onClick={() => setSelected(selected === item.id ? null : item.id)}
                   >
                     <span className="wg-item-icon">{item.icon}</span>
@@ -162,6 +268,7 @@ export default function WasteGame() {
               <div
                 key={bin.id}
                 className={`wg-bin${overBin === bin.id ? ' wg-bin-over' : ''}`}
+                data-bin-id={bin.id}
                 style={{
                   background: bin.color,
                   borderColor: overBin === bin.id ? bin.text : bin.border,
@@ -222,6 +329,11 @@ export default function WasteGame() {
 
         </div>
       </div>
+      {touchDrag && (
+        <div className="wg-touch-drag" style={{ left: touchDrag.x, top: touchDrag.y }}>
+          {touchItem?.icon} {touchItem?.name}
+        </div>
+      )}
     </>
   );
 }

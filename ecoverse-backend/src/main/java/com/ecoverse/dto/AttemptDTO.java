@@ -12,6 +12,8 @@ public class AttemptDTO {
     public static class AttemptRequest {
         @NotEmpty(message = "Answers map cannot be empty")
         private Map<Long, String> answers;
+        // questionId -> true if hint was used on that question (costs 50% XP)
+        private Map<Long, Boolean> hintsUsed;
     }
 
     @Data @Builder @NoArgsConstructor @AllArgsConstructor

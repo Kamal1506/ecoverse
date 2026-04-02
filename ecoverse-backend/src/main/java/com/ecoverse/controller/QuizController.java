@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/quizzes")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class QuizController {
 
@@ -99,6 +100,8 @@ public class QuizController {
                         .optionB(q.getOptionB())
                         .optionC(q.getOptionC())
                         .optionD(q.getOptionD())
+                        .hint(q.getHint())
+                        .explanation(q.getExplanation())
                         .build())
                 .toList();
 

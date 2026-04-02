@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './HUD.css';
@@ -14,6 +15,7 @@ export default function HUD({ streak }) {
   const { user, logout } = useAuth();
   const navigate         = useNavigate();
   const location         = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const xp      = user?.totalXp ?? 0;
   const level   = getLevel(xp);
@@ -21,6 +23,30 @@ export default function HUD({ streak }) {
   const isAdmin = user?.role === 'ADMIN';
   const s       = streak ?? user?.currentStreak ?? 0;
   const isActive = (p) => location.pathname === p;
+  const navItems = isAdmin
+    ? [
+      { label: 'CONTROL PANEL', path: '/admin' },
+      { label: 'ANALYTICS', path: '/analytics' },
+    ]
+    : [
+      { label: 'MISSIONS', path: '/dashboard' },
+      { label: 'RANKINGS', path: '/leaderboard' },
+      { label: 'PROFILE', path: '/profile' },
+    ];
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 769) {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   const LogoutIcon = () => (
     <svg className="hud-logout-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -29,52 +55,75 @@ export default function HUD({ streak }) {
     </svg>
   );
 
+  const MenuIcon = () => (
+    <svg className="hud-menu-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
+    </svg>
+  );
+
   return (
-    <nav className="hud">
+    <nav className={`hud${menuOpen ? ' menu-open' : ''}`}>
       <div className="hud-logo" onClick={() => navigate(isAdmin ? '/admin' : '/dashboard')}>
         ECO<span>VERSE</span>
       </div>
 
-      <div className="hud-nav">
-        {isAdmin ? (
-          <>
-            <button className={`hud-tab${isActive('/admin') ? ' active' : ''}`} onClick={() => navigate('/admin')}>CONTROL PANEL</button>
-            <button className={`hud-tab${isActive('/analytics') ? ' active' : ''}`} onClick={() => navigate('/analytics')}>ANALYTICS</button>
-          </>
-        ) : (
-          <>
-            <button className={`hud-tab${isActive('/dashboard') ? ' active' : ''}`} onClick={() => navigate('/dashboard')}>MISSIONS</button>
-            <button className={`hud-tab${isActive('/leaderboard') ? ' active' : ''}`} onClick={() => navigate('/leaderboard')}>RANKINGS</button>
-            <button className={`hud-tab${isActive('/profile') ? ' active' : ''}`} onClick={() => navigate('/profile')}>PROFILE</button>
-          </>
-        )}
+      <div className="hud-mobile-meta" aria-label={`Level ${level}, ${xp.toLocaleString()} XP`}>
+        <div className="hud-level">LVL <span className="hud-level-n">{level}</span></div>
+        <div className="hud-xp-label">
+          <div className="hud-xp-track">
+            <progress className="hud-xp-fill" max="100" value={pct} />
+          </div>
+          <span>{xp.toLocaleString()} XP</span>
+        </div>
       </div>
 
-      <div className="hud-right">
-        {s > 0 && (
-          <div className="hud-streak" title={`${s} day streak!`}>
-            <span className="hud-streak-icon" aria-hidden="true">{"\uD83D\uDD25"}</span>
-            <span className="hud-streak-text">Day {s} streak</span>
-          </div>
-        )}
-        <div className="hud-xp-wrap">
-          <div className="hud-level">LVL <span className="hud-level-n">{level}</span></div>
-          <div className="hud-xp-label">
-            <div className="hud-xp-track">
-              <div className="hud-xp-fill" style={{ width: `${pct}%` }} />
-            </div>
-            <span>{xp.toLocaleString()} XP</span>
-          </div>
+      <button
+        type="button"
+        className="hud-menu-toggle"
+        aria-label="Toggle navigation"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((v) => !v)}>
+        <MenuIcon />
+      </button>
+
+      <div className={`hud-content${menuOpen ? ' open' : ''}`}>
+        <div className="hud-nav">
+          {navItems.map((item) => (
+            <button
+              key={item.path}
+              className={`hud-tab${isActive(item.path) ? ' active' : ''}`}
+              onClick={() => navigate(item.path)}>
+              {item.label}
+            </button>
+          ))}
         </div>
-        <button
-          type="button"
-          className="hud-logout"
-          onClick={() => { logout(); navigate('/login'); }}
-          title="Logout"
-          aria-label="Logout">
-          <LogoutIcon />
-          <span className="hud-logout-text">LOGOUT</span>
-        </button>
+
+        <div className="hud-right">
+          {s > 0 && (
+            <div className="hud-streak" title={`${s} day streak!`}>
+              <span className="hud-streak-icon" aria-hidden="true">{"\uD83D\uDD25"}</span>
+              <span className="hud-streak-text">Day {s} streak</span>
+            </div>
+          )}
+          <div className="hud-xp-wrap">
+            <div className="hud-level">LVL <span className="hud-level-n">{level}</span></div>
+            <div className="hud-xp-label">
+              <div className="hud-xp-track">
+                <progress className="hud-xp-fill" max="100" value={pct} />
+              </div>
+              <span>{xp.toLocaleString()} XP</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="hud-logout"
+            onClick={() => { logout(); navigate('/login'); }}
+            title="Logout"
+            aria-label="Logout">
+            <LogoutIcon />
+            <span className="hud-logout-text">LOGOUT</span>
+          </button>
+        </div>
       </div>
     </nav>
   );

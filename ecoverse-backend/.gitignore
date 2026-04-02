@@ -6,6 +6,18 @@ target/
 application.properties
 application-dev.properties
 ### STS ###
+
+# Maven
+target/
+
+# Local Maven repo (your mistake)
+.userhome/
+.m2/
+
+# OS junk
+*.log
+*.tmp
+.DS_Store
 .apt_generated
 .classpath
 .factorypath
@@ -13,7 +25,7 @@ application-dev.properties
 .settings
 .springBeans
 .sts4-cache
-
+.env
 ### IntelliJ IDEA ###
 .idea
 *.iws

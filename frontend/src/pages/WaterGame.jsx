@@ -16,7 +16,7 @@ const PIPE_CONN = {
 const LEVELS = [
   { label:'EASY', cols:4, rows:4,
     grid:[
-      [{t:'S',r:0,f:true}, {t:'I',r:1,f:false},{t:'L',r:1,f:false},{t:'H',r:0,f:true}],
+      [{t:'S',r:0,f:true}, {t:'I',r:1,f:false},{t:'T',r:2,f:false},{t:'H',r:0,f:true}],
       [{t:'E',r:0,f:true}, {t:'E',r:0,f:true}, {t:'I',r:0,f:false},{t:'E',r:0,f:true}],
       [{t:'E',r:0,f:true}, {t:'L',r:0,f:false},{t:'L',r:3,f:false},{t:'E',r:0,f:true}],
       [{t:'E',r:0,f:true}, {t:'H',r:0,f:true}, {t:'E',r:0,f:true}, {t:'E',r:0,f:true}],
@@ -33,12 +33,12 @@ const LEVELS = [
   },
   { label:'HARD', cols:6, rows:6,
     grid:[
-      [{t:'S',r:0,f:true}, {t:'I',r:1,f:false},{t:'T',r:0,f:false},{t:'I',r:1,f:false},{t:'L',r:1,f:false},{t:'H',r:0,f:true}],
-      [{t:'E',r:0,f:true}, {t:'E',r:0,f:true}, {t:'I',r:0,f:false},{t:'E',r:0,f:true}, {t:'I',r:0,f:false},{t:'E',r:0,f:true}],
-      [{t:'L',r:0,f:false},{t:'I',r:1,f:false},{t:'T',r:1,f:false},{t:'L',r:0,f:false},{t:'L',r:3,f:false},{t:'E',r:0,f:true}],
+      [{t:'S',r:0,f:true}, {t:'I',r:1,f:false},{t:'T',r:0,f:false},{t:'I',r:1,f:false},{t:'T',r:1,f:false},{t:'H',r:0,f:true}],
+      [{t:'L',r:0,f:true}, {t:'I',r:0,f:true}, {t:'I',r:0,f:false},{t:'T',r:0,f:true}, {t:'I',r:0,f:false},{t:'T',r:0,f:false}],
+      [{t:'L',r:0,f:false},{t:'I',r:1,f:false},{t:'T',r:1,f:false},{t:'L',r:0,f:false},{t:'I',r:3,f:false},{t:'L',r:0,f:false}],
       [{t:'I',r:0,f:false},{t:'E',r:0,f:true}, {t:'I',r:0,f:false},{t:'I',r:0,f:false},{t:'E',r:0,f:true}, {t:'E',r:0,f:true}],
-      [{t:'T',r:3,f:false},{t:'I',r:1,f:false},{t:'T',r:2,f:false},{t:'L',r:2,f:false},{t:'E',r:0,f:true}, {t:'E',r:0,f:true}],
-      [{t:'H',r:0,f:true}, {t:'E',r:0,f:true}, {t:'H',r:0,f:true}, {t:'E',r:0,f:true}, {t:'E',r:0,f:true},{t:'H',r:0,f:true}],
+      [{t:'T',r:3,f:false},{t:'I',r:1,f:false},{t:'T',r:2,f:false},{t:'T',r:2,f:false},{t:'I',r:0,f:false}, {t:'L',r:0,f:false}],
+      [{t:'H',r:0,f:true}, {t:'L',r:0,f:false}, {t:'H',r:0,f:true}, {t:'E',r:0,f:true}, {t:'L',r:2,f:false},{t:'H',r:0,f:true}],
     ]
   },
 ];
@@ -205,7 +205,7 @@ export default function WaterGame() {
   return (
     <>
       <HUD />
-      <div className="page-container">
+      <div className="page-container ww-page">
         <div className="ww-wrap">
 
           <div className="ww-header">

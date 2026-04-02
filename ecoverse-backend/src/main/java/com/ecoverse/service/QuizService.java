@@ -5,6 +5,7 @@ import com.ecoverse.entity.Question;
 import com.ecoverse.entity.Quiz;
 import com.ecoverse.repository.QuestionRepository;
 import com.ecoverse.repository.QuizRepository;
+import com.ecoverse.repository.ResultRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class QuizService {
 
     private final QuizRepository     quizRepository;
     private final QuestionRepository questionRepository;
+    private final ResultRepository   resultRepository;
 
     @Transactional
     public QuizDetailResponse createQuiz(CreateQuizRequest request) {
@@ -90,6 +92,7 @@ public class QuizService {
     public void deleteQuiz(Long id) {
         if (!quizRepository.existsById(id))
             throw new IllegalArgumentException("Quiz not found: " + id);
+        resultRepository.deleteByQuizId(id);
         quizRepository.deleteById(id);
     }
 

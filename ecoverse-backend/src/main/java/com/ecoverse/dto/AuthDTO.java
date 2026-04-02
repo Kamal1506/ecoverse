@@ -36,8 +36,10 @@ public class AuthDTO {
         private String  email;
         private String  role;
         private Integer totalXp;
-        private Integer currentStreak;   // Feature 1
-        private Integer longestStreak;   // Feature 1
+        private Integer currentStreak;
+        private Integer longestStreak;
+        private String  provider;       // "LOCAL" or "GOOGLE"
+        private String  pictureUrl;     // Google profile picture
         private String  message;
     }
 }

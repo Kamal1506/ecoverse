@@ -1,14 +1,72 @@
 /* ── Auth Pages — EcoVerse Gaming Style ──────────────────────────────────── */
 
-.auth-bg {
+.auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: clamp(24px, 6vw, 52px);
   background: var(--bg);
   position: relative;
   overflow: hidden;
+}
+
+.auth-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at top, rgba(0, 255, 136, 0.08), transparent 65%);
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.auth-input {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 16px;
+  outline: none;
+  width: 100%;
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+}
+
+.auth-input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 1px var(--green), 0 0 16px rgba(0, 255, 136, 0.1);
+  background: rgba(0, 255, 136, 0.02);
+}
+
+.auth-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  text-align: center;
+  margin: 0 0 18px;
+}
+
+.auth-btn {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
 }
 
 /* Animated perspective grid in background */
@@ -32,6 +90,9 @@
   padding: 44px 40px;
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* Top accent line */
@@ -320,4 +381,45 @@
 .auth-link:hover {
   color: var(--green);
   text-shadow: 0 0 10px var(--green);
+}
+
+/* Add these to your existing Auth.css */
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.auth-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.auth-divider-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+.google-btn-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Google "Signed in with Google" badge on HUD/Profile */
+.google-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #4285F4;
+  border: 1px solid rgba(66,133,244,0.3);
+  background: rgba(66,133,244,0.07);
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }

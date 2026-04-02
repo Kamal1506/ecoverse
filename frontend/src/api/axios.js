@@ -2,8 +2,12 @@ import axios from 'axios';
 
 // Base URL — during dev, Vite proxies /api → localhost:8080
 // In production, set VITE_API_URL in .env
+const defaultDevApiBase = 'http://localhost:8080/api';
+const baseURL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV ? defaultDevApiBase : '/api');
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
