@@ -37,7 +37,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
-    if (status === 401 || status === 403) {
+    if (status === 401) {
       window.__ecoverse_token__ = null;
       sessionStorage.removeItem('ecoverse_token');
       sessionStorage.removeItem('ecoverse_user');
