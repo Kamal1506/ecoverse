@@ -109,7 +109,10 @@ export default function Profile() {
       const { data } = await api.post('/profile/me/photo', formData, {
         skipAuthRedirect: true,
       });
-      setForm(prev => ({ ...prev, pictureUrl: data?.pictureUrl || '' }));
+      const nextPictureUrl = data?.pictureUrl || '';
+      setForm(prev => ({ ...prev, pictureUrl: nextPictureUrl }));
+      setProfile(prev => prev ? { ...prev, pictureUrl: nextPictureUrl } : prev);
+      updateUserProfile({ pictureUrl: nextPictureUrl });
       setAvatarLoadError(false);
       toast.success('Photo uploaded');
     } catch (error) {

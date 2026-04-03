@@ -10,11 +10,17 @@ const RANK_MEDALS = { 1: '\uD83E\uDD47', 2: '\uD83E\uDD48', 3: '\uD83E\uDD49' };
 const CROWN = '\uD83D\uDC51';
 const SEEDLING = '\uD83C\uDF31';
 const getInitial = (name) => (name?.trim()?.charAt(0)?.toUpperCase() || '?');
+const isValidProfileImage = (value) => {
+  if (!value || typeof value !== 'string') return false;
+  const v = value.trim();
+  return /^https?:\/\//i.test(v);
+};
 
 export default function Leaderboard() {
   const { user } = useAuth();
   const [board, setBoard] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [failedImages, setFailedImages] = useState({});
 
   useEffect(() => {
     api.get('/leaderboard')
@@ -105,8 +111,13 @@ export default function Leaderboard() {
 
                     <div className="lbc lb-player-cell">
                       <div className="lb-avatar" style={{ borderColor: color, color }}>
-                        {player.pictureUrl ? (
-                          <img src={player.pictureUrl} alt={player.name} className="lb-avatar-img" />
+                        {isValidProfileImage(player.pictureUrl) && !failedImages[player.userId] ? (
+                          <img
+                            src={player.pictureUrl}
+                            alt={player.name}
+                            className="lb-avatar-img"
+                            onError={() => setFailedImages(prev => ({ ...prev, [player.userId]: true }))}
+                          />
                         ) : (
                           getInitial(player.name)
                         )}

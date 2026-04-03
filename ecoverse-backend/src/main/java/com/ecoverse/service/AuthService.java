@@ -46,11 +46,17 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
         String normalizedEmail = request.getEmail() == null ? "" : request.getEmail().trim().toLowerCase();
+        User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseThrow(() -> new IllegalArgumentException("No account found for this email. Please register first."));
+
+        // If this email belongs to a Google-only account, password login will always fail.
+        if ("GOOGLE".equalsIgnoreCase(user.getProvider())
+                && (user.getPassword() == null || user.getPassword().trim().isEmpty())) {
+            throw new IllegalArgumentException("This account was created with Google. Please use Sign in with Google.");
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(normalizedEmail, request.getPassword()));
-
-        User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         UserStreak streak = streakService.updateStreak(user);
         String token = jwtUtil.generateToken(user.getEmail().trim().toLowerCase());
