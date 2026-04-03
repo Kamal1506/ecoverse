@@ -19,9 +19,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
+        User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "No user found with email: " + email));
+                        "No user found with email: " + normalizedEmail));
 
         String roleName = user.getRole().name();
         String authority = roleName.startsWith("ROLE_") ? roleName : "ROLE_" + roleName;

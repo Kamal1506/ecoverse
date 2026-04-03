@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -23,15 +24,19 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final StreakService         streakService;
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail()))
+        String normalizedEmail = request.getEmail() == null ? "" : request.getEmail().trim().toLowerCase();
+        String normalizedName = request.getName() == null ? "" : request.getName().trim();
+
+        if (userRepository.existsByEmailIgnoreCase(normalizedEmail))
             throw new IllegalArgumentException("Email already registered.");
 
         User user = User.builder()
-                .name(request.getName()).email(request.getEmail())
+                .name(normalizedName).email(normalizedEmail)
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(User.Role.USER).totalXp(0).build();
-        userRepository.save(user);
+                .role(User.Role.USER).provider("LOCAL").totalXp(0).build();
+        user = userRepository.save(user);
 
         UserStreak streak = streakService.updateStreak(user);
         String token = jwtUtil.generateToken(user.getEmail());
@@ -40,10 +45,11 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        String normalizedEmail = request.getEmail() == null ? "" : request.getEmail().trim().toLowerCase();
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(normalizedEmail, request.getPassword()));
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         UserStreak streak = streakService.updateStreak(user);
@@ -62,6 +68,8 @@ public class AuthService {
                 .role(user.getRole().normalized()).totalXp(user.getTotalXp())
                 .currentStreak(streak.getCurrentStreak())
                 .longestStreak(streak.getLongestStreak())
+                .provider(user.getProvider())
+                .pictureUrl(user.getPictureUrl())
                 .message(msg).build();
     }
 }
