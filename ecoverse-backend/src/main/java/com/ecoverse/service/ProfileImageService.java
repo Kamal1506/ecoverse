@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,13 +15,6 @@ public class ProfileImageService {
     private final Cloudinary cloudinary;
 
     public String uploadProfilePhoto(MultipartFile file, Long userId) {
-        Object cloudName = cloudinary.config.cloudName;
-        Object apiKey = cloudinary.config.apiKey;
-        Object apiSecret = cloudinary.config.apiSecret;
-        if (isBlank(cloudName) || isBlank(apiKey) || isBlank(apiSecret)) {
-            throw new IllegalStateException("Cloudinary is not configured. Set cloudinary.cloud-name, cloudinary.api-key, and cloudinary.api-secret");
-        }
-
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("Profile image file is required");
         }
@@ -30,6 +22,14 @@ public class ProfileImageService {
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new IllegalArgumentException("Only image files are allowed");
+        }
+
+        Object cloudName = cloudinary.config.cloudName;
+        Object apiKey = cloudinary.config.apiKey;
+        Object apiSecret = cloudinary.config.apiSecret;
+        if (isBlank(cloudName) || isBlank(apiKey) || isBlank(apiSecret)) {
+            throw new IllegalStateException(
+                    "Image upload service is not configured. Set CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET");
         }
 
         try {
@@ -48,7 +48,7 @@ public class ProfileImageService {
                 throw new IllegalStateException("Cloudinary upload succeeded without secure URL");
             }
             return secureUrl.toString();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Failed to upload image to Cloudinary", e);
         }
     }

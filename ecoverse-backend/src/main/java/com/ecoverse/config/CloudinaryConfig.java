@@ -11,6 +11,9 @@ import java.util.Map;
 @Configuration
 public class CloudinaryConfig {
 
+    @Value("${cloudinary.url:${CLOUDINARY_URL:}}")
+    private String cloudinaryUrl;
+
     @Value("${cloudinary.cloud-name:}")
     private String cloudName;
 
@@ -22,6 +25,10 @@ public class CloudinaryConfig {
 
     @Bean
     public Cloudinary cloudinary() {
+        if (cloudinaryUrl != null && !cloudinaryUrl.trim().isEmpty()) {
+            return new Cloudinary(cloudinaryUrl.trim());
+        }
+
         Map<String, String> config = new HashMap<>();
         config.put("cloud_name", cloudName);
         config.put("api_key", apiKey);
