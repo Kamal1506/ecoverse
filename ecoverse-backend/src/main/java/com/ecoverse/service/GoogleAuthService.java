@@ -12,12 +12,9 @@ import com.google.api.client.json.gson.GsonFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +25,6 @@ public class GoogleAuthService {
 
     private final UserRepository      userRepository;
     private final JwtUtil             jwtUtil;
-    private final UserDetailsService  userDetailsService;
     private final StreakService        streakService;
 
     @Value("${google.client-id}")
@@ -36,16 +32,24 @@ public class GoogleAuthService {
 
     @Transactional
     public AuthResponse authenticateGoogleUser(String idTokenString) {
+        if (idTokenString == null || idTokenString.trim().isEmpty()) {
+            throw new IllegalArgumentException("Google token is missing. Please try again.");
+        }
+
         // Step 1: Verify the token with Google
         GoogleIdToken.Payload payload = verifyToken(idTokenString);
 
         // Step 2: Extract user info from verified token
-        String email      = payload.getEmail();
+        String email      = payload.getEmail() == null ? "" : payload.getEmail().trim().toLowerCase();
         String name       = (String) payload.get("name");
         String pictureUrl = (String) payload.get("picture");
 
+        if (email.isBlank()) {
+            throw new IllegalArgumentException("Google account email is missing.");
+        }
+
         // Step 3: Find existing user or create new one
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         if (user == null) {
             // New user — auto-register via Google
@@ -73,7 +77,6 @@ public class GoogleAuthService {
 
         // Step 4: Update streak and generate our JWT
         UserStreak streak = streakService.updateStreak(user);
-        UserDetails ud    = userDetailsService.loadUserByUsername(user.getEmail());
         String jwt = jwtUtil.generateToken(user.getEmail());
 
         String msg = user.getProvider().equals("GOOGLE") && streak.getCurrentStreak() > 1

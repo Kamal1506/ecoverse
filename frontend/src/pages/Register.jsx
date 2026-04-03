@@ -29,9 +29,15 @@ export default function Register() {
   };
 
   const handleGoogleSuccess = useCallback(async (credentialResponse) => {
+    const credential = (credentialResponse?.credential || '').trim();
+    if (!credential) {
+      toast.error('Google did not return a valid credential. Please try again.');
+      return;
+    }
+
     setLoading(true);
     try {
-      const data = await googleLogin(credentialResponse.credential);
+      const data = await googleLogin(credential);
       toast.success(data.message || 'Welcome to EcoVerse!');
       navigate('/dashboard');
     } catch (err) {
