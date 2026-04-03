@@ -1,7 +1,6 @@
 package com.ecoverse.service;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,15 +39,25 @@ public class ProfileImageService {
             Map<String, Object> options = new HashMap<>();
             options.put("folder", "ecoverse/profile");
             options.put("public_id", "u" + userId + "_" + UUID.randomUUID());
-            options.put("resource_type", "auto");
+            options.put("resource_type", "image");
             options.put("overwrite", false);
             options.put("use_filename", false);
             options.put("unique_filename", true);
-            options.put("format", "webp");
 
             Map<?, ?> result;
             try (InputStream stream = file.getInputStream()) {
-                result = cloudinary.uploader().upload(stream, ObjectUtils.asMap(options));
+                result = cloudinary.uploader().upload(stream, options);
+            } catch (Exception primaryError) {
+                // Fallback path: retry with byte[] and minimal options for stricter source formats.
+                result = cloudinary.uploader().upload(
+                        file.getBytes(),
+                        Map.of(
+                                "folder", "ecoverse/profile",
+                                "public_id", "u" + userId + "_" + UUID.randomUUID(),
+                                "resource_type", "image",
+                                "overwrite", false
+                        )
+                );
             }
 
             Object secureUrl = result.get("secure_url");
@@ -60,7 +69,7 @@ public class ProfileImageService {
             throw new IllegalStateException("Failed to read image file for upload", e);
         } catch (Exception e) {
             throw new IllegalStateException(
-                    "Failed to upload image to Cloudinary. Please use JPG, JPEG, PNG, WEBP, or GIF under 25MB.", e);
+                    "Failed to upload image to Cloudinary. Please try JPG, JPEG, PNG, WEBP, or GIF under 25MB.", e);
         }
     }
 
