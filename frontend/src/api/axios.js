@@ -16,7 +16,6 @@ const baseURL = normalizeApiBase(configuredBase) ||
 
 const api = axios.create({
   baseURL,
-  headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });
 
@@ -29,7 +28,9 @@ api.interceptors.request.use(
     }
     // Let the browser set multipart boundaries for FormData uploads.
     if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
-      if (config.headers) {
+      if (config.headers?.set) {
+        config.headers.set('Content-Type', undefined);
+      } else if (config.headers) {
         delete config.headers['Content-Type'];
         delete config.headers['content-type'];
       }
