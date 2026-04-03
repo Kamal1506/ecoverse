@@ -15,6 +15,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    // Valid bcrypt hash used as a placeholder for OAuth-only users with no local password.
+    private static final String OAUTH_PLACEHOLDER_BCRYPT =
+            "$2a$10$7EqJtq98hPqEX7fNZaFWoOePaWxn96p36m9K4H0sY5Q4fM9vDOMkK";
+
     private final UserRepository userRepository;
 
     @Override
@@ -26,10 +30,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         String roleName = user.getRole().name();
         String authority = roleName.startsWith("ROLE_") ? roleName : "ROLE_" + roleName;
+        String password = user.getPassword();
+        if (password == null || password.trim().isEmpty()) {
+            password = OAUTH_PLACEHOLDER_BCRYPT;
+        }
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
-                user.getPassword(),
+                password,
                 List.of(new SimpleGrantedAuthority(authority))
         );
     }
