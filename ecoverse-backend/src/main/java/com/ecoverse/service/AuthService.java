@@ -70,6 +70,6 @@ public class AuthService {
                 .longestStreak(streak.getLongestStreak())
                 .provider(user.getProvider())
                 .pictureUrl(user.getPictureUrl())
-                .message(msg).build();
+                 .message(msg).build();
     }
 }
