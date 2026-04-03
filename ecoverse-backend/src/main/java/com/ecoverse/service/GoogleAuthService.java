@@ -52,7 +52,7 @@ public class GoogleAuthService {
         User user = userRepository.findByEmailIgnoreCase(email).orElse(null);
 
         if (user == null) {
-            // New user — auto-register via Google
+            // New user - auto-register via Google
             user = User.builder()
                     .name(name != null ? name : email.split("@")[0])
                     .email(email)
@@ -65,19 +65,22 @@ public class GoogleAuthService {
             userRepository.save(user);
             log.info("New Google user registered: {}", email);
         } else {
-            // Existing user — keep custom profile photo; only fill when empty
+            if (!email.equals(user.getEmail())) {
+                user.setEmail(email);
+            }
+            // Existing user - keep custom profile photo; only fill when empty
             String existing = user.getPictureUrl();
             boolean missing = existing == null || existing.trim().isEmpty();
             if (missing && pictureUrl != null && !pictureUrl.trim().isEmpty()) {
                 user.setPictureUrl(pictureUrl);
-                userRepository.save(user);
             }
+            userRepository.save(user);
             log.info("Google user logged in: {}", email);
         }
 
         // Step 4: Update streak and generate our JWT
         UserStreak streak = streakService.updateStreak(user);
-        String jwt = jwtUtil.generateToken(user.getEmail());
+        String jwt = jwtUtil.generateToken(user.getEmail().trim().toLowerCase());
 
         String msg = user.getProvider().equals("GOOGLE") && streak.getCurrentStreak() > 1
                 ? "Day " + streak.getCurrentStreak() + " streak! \uD83D\uDD25"

@@ -39,7 +39,7 @@ public class AuthService {
         user = userRepository.save(user);
 
         UserStreak streak = streakService.updateStreak(user);
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail().trim().toLowerCase());
 
         return buildResponse(user, token, streak, "Welcome to EcoVerse, " + user.getName() + "!");
     }
@@ -53,7 +53,7 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         UserStreak streak = streakService.updateStreak(user);
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail().trim().toLowerCase());
 
         String msg = streak.getCurrentStreak() > 1
                 ? "Day " + streak.getCurrentStreak() + " streak! Keep it up! \uD83D\uDD25"

@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                 // 4. Validate: signature + expiry + email match
-                if (jwtUtil.isTokenValid(token) && email.equals(userDetails.getUsername())) {
+                if (jwtUtil.isTokenValid(token) && email.equalsIgnoreCase(userDetails.getUsername())) {
 
                     // 5. Build auth object and inject into SecurityContext
                     UsernamePasswordAuthenticationToken auth =

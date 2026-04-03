@@ -32,12 +32,12 @@ public class ProfileController {
     private final QuizAttemptService  attemptService;
     private final ProfileImageService profileImageService;
 
-    // GET /api/profile/me — full profile with streak + badges + history
+    // GET /api/profile/me - full profile with streak + badges + history
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getMyProfile(
             @AuthenticationPrincipal UserDetails ud) {
 
-        User user = userRepository.findByEmail(ud.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(ud.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         UserStreak streak = streakService.getStreak(user.getId());
@@ -63,7 +63,7 @@ public class ProfileController {
             @AuthenticationPrincipal UserDetails ud,
             @RequestBody ProfileUpdateRequest request) {
 
-        User user = userRepository.findByEmail(ud.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(ud.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String name = trimToNull(request.getName());
@@ -111,7 +111,7 @@ public class ProfileController {
             @AuthenticationPrincipal UserDetails ud,
             @RequestParam("file") MultipartFile file) {
 
-        User user = userRepository.findByEmail(ud.getUsername())
+        User user = userRepository.findByEmailIgnoreCase(ud.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String imageUrl = profileImageService.uploadProfilePhoto(file, user.getId());
