@@ -2,10 +2,25 @@ import { createContext, useContext, useState } from 'react';
 import api from '../api/axios';
 
 const AuthContext = createContext(null);
+const TOKEN_KEY = 'ecoverse_token';
+const USER_KEY = 'ecoverse_user';
 
 export function AuthProvider({ children }) {
-  const [user,  setUser]  = useState(null);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY));
+  const [user,  setUser]  = useState(() => {
+    const raw = sessionStorage.getItem(USER_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      sessionStorage.removeItem(USER_KEY);
+      return null;
+    }
+  });
+
+  if (token) {
+    window.__ecoverse_token__ = token;
+  }
 
   const register = async (name, email, password) => {
     const { data } = await api.post('/auth/register', { name, email, password });
@@ -26,6 +41,8 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null); setToken(null);
     window.__ecoverse_token__ = null;
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USER_KEY);
   };
 
   const updateXp = (xpEarned) =>
@@ -35,9 +52,7 @@ export function AuthProvider({ children }) {
     setUser(u => u ? { ...u, ...updates } : u);
 
   const _apply = (data) => {
-    window.__ecoverse_token__ = data.token;
-    setToken(data.token);
-    setUser({
+    const nextUser = {
       name:          data.name,
       email:         data.email,
       role:          data.role,
@@ -46,7 +61,12 @@ export function AuthProvider({ children }) {
       longestStreak: data.longestStreak ?? 0,
       provider:      data.provider      ?? 'LOCAL',
       pictureUrl:    data.pictureUrl    ?? null,
-    });
+    };
+    window.__ecoverse_token__ = data.token;
+    setToken(data.token);
+    setUser(nextUser);
+    sessionStorage.setItem(TOKEN_KEY, data.token);
+    sessionStorage.setItem(USER_KEY, JSON.stringify(nextUser));
   };
 
   return (

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Base URL — during dev, Vite proxies /api → localhost:8080
-// In production, set VITE_API_URL in .env
+// Base URL: during dev, Vite proxies /api to localhost:8080.
+// In production, set VITE_API_URL in .env.
 const defaultDevApiBase = 'http://localhost:8080/api';
 const configuredBase = (import.meta.env.VITE_API_URL || '').trim();
 
@@ -20,11 +20,10 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// ── Request interceptor: attach JWT to every outgoing request ────────────
+// Attach JWT to every outgoing request.
 api.interceptors.request.use(
   (config) => {
-    // Token is stored in memory via AuthContext (not localStorage)
-    const token = window.__ecoverse_token__;
+    const token = window.__ecoverse_token__ || sessionStorage.getItem('ecoverse_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,13 +32,15 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ── Response interceptor: handle 401 globally ────────────────────────────
+// Handle auth failures globally.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid — clear token and redirect to login
+    const status = error.response?.status;
+    if (status === 401 || status === 403) {
       window.__ecoverse_token__ = null;
+      sessionStorage.removeItem('ecoverse_token');
+      sessionStorage.removeItem('ecoverse_user');
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }

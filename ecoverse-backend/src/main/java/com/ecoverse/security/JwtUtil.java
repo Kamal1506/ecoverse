@@ -12,10 +12,12 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    private static final long DEFAULT_EXPIRATION_MS = 24 * 60 * 60 * 1000L;
+
     @Value("${ecoverse.jwt.secret}")
     private String secret;
 
-    @Value("${ecoverse.jwt.expiration}")
+    @Value("${ecoverse.jwt.expiration:86400000}")
     private long expiration;
 
     // ── build signing key from hex secret ──────────────────────────────────
@@ -26,10 +28,11 @@ public class JwtUtil {
 
     // ── generate a token for the given email ──────────────────────────────
     public String generateToken(String email) {
+        long expirationMs = resolveExpirationMs();
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -56,5 +59,12 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    private long resolveExpirationMs() {
+        if (expiration <= 0) return DEFAULT_EXPIRATION_MS;
+        // Backward compatibility: if configured as seconds (e.g., 3600), convert to ms.
+        if (expiration < 100_000L) return expiration * 1000L;
+        return expiration;
     }
 }
