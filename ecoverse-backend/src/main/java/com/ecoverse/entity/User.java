@@ -47,9 +47,8 @@ public class User {
     private String provider = "LOCAL";
 
     // Profile picture URL or a data URL uploaded by the player
-    @Lob
-    @Column(name = "picture_url", columnDefinition = "TEXT")
-    private String pictureUrl;
+    @Column(name = "picture_url", length = 1000)
+private String pictureUrl;
 
     @Column(length = 80)
     private String nationality;

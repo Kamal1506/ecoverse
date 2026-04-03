@@ -107,13 +107,17 @@ export default function Profile() {
     setUploadingPhoto(true);
     try {
       const { data } = await api.post('/profile/me/photo', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        skipAuthRedirect: true,
       });
       setForm(prev => ({ ...prev, pictureUrl: data?.pictureUrl || '' }));
       setAvatarLoadError(false);
       toast.success('Photo uploaded');
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Failed to upload photo');
+      if (error?.response?.status === 401) {
+        toast.error('Session expired. Please log in again.');
+      } else {
+        toast.error(error?.response?.data?.message || 'Failed to upload photo');
+      }
     } finally {
       setUploadingPhoto(false);
       e.target.value = '';

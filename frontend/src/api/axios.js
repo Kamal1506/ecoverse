@@ -37,7 +37,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
-    if (status === 401) {
+    const skipAuthRedirect = error.config?.skipAuthRedirect === true;
+    if (status === 401 && !skipAuthRedirect) {
       window.__ecoverse_token__ = null;
       sessionStorage.removeItem('ecoverse_token');
       sessionStorage.removeItem('ecoverse_user');
