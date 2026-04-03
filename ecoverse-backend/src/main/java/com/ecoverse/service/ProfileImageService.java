@@ -1,10 +1,14 @@
 package com.ecoverse.service;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,7 +24,7 @@ public class ProfileImageService {
         }
 
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
+        if (!isImageContentType(contentType)) {
             throw new IllegalArgumentException("Only image files are allowed");
         }
 
@@ -33,24 +37,37 @@ public class ProfileImageService {
         }
 
         try {
-            Map<?, ?> result = cloudinary.uploader().upload(
-                    file.getBytes(),
-                    Map.of(
-                            "folder", "ecoverse/profile",
-                            "public_id", "u" + userId + "_" + UUID.randomUUID(),
-                            "resource_type", "image",
-                            "overwrite", false
-                    )
-            );
+            Map<String, Object> options = new HashMap<>();
+            options.put("folder", "ecoverse/profile");
+            options.put("public_id", "u" + userId + "_" + UUID.randomUUID());
+            options.put("resource_type", "auto");
+            options.put("overwrite", false);
+            options.put("use_filename", false);
+            options.put("unique_filename", true);
+            options.put("format", "webp");
+
+            Map<?, ?> result;
+            try (InputStream stream = file.getInputStream()) {
+                result = cloudinary.uploader().upload(stream, ObjectUtils.asMap(options));
+            }
 
             Object secureUrl = result.get("secure_url");
             if (secureUrl == null) {
                 throw new IllegalStateException("Cloudinary upload succeeded without secure URL");
             }
             return secureUrl.toString();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read image file for upload", e);
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to upload image to Cloudinary", e);
+            throw new IllegalStateException(
+                    "Failed to upload image to Cloudinary. Please use JPG, JPEG, PNG, WEBP, or GIF under 25MB.", e);
         }
+    }
+
+    private boolean isImageContentType(String contentType) {
+        if (contentType == null) return false;
+        String ct = contentType.trim().toLowerCase();
+        return ct.startsWith("image/");
     }
 
     private boolean isBlank(Object value) {

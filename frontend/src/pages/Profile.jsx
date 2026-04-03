@@ -38,7 +38,7 @@ const getInitial = (name) => {
   const firstWord = name.trim().split(/\s+/)[0];
   return firstWord?.charAt(0)?.toUpperCase() || '?';
 };
-const MAX_PROFILE_IMAGE_SIZE = 10 * 1024 * 1024;
+const MAX_PROFILE_IMAGE_SIZE = 25 * 1024 * 1024;
 
 const isValidProfileImage = (value) => {
   if (!value || typeof value !== 'string') return false;
@@ -98,7 +98,7 @@ export default function Profile() {
       return;
     }
     if (file.size > MAX_PROFILE_IMAGE_SIZE) {
-      toast.error('Image is too large. Max allowed is 10MB');
+      toast.error('Image is too large. Max allowed is 25MB');
       e.target.value = '';
       return;
     }
