@@ -1,6 +1,6 @@
 # 🌍 EcoVerse — Gamified Environmental Education Platform
 
-> **Built for the Government of Punjab** | Educate. Engage. Empower.
+> | Educate. Engage. Empower.
 
 EcoVerse is a full-stack gamified learning platform that teaches environmental awareness through quizzes, interactive games, streaks, badges and leaderboards. Built with Spring Boot and React.
 
